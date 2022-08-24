@@ -1,0 +1,15 @@
+{
+    "id": 0,
+    "userName": "Malin",
+    "eMail": "fin.ja@hotmail.com",
+    "genres": [
+        "Indie",
+        "Hip Hop",
+        "Songwriter"
+    ],
+    "artists": [
+        "L'aupaire",
+        "RY X",
+        "Post Malone"
+    ]
+}
