@@ -7,7 +7,6 @@ interface Props {
 
 
 export default function PrimaryButton({ onPress, title }: Props
-
 ) {
     return (
         <Pressable style={styles.button} onPress={onPress}>
@@ -32,5 +31,6 @@ const styles = StyleSheet.create({
         lineHeight: 21,
         fontWeight: 'bold',
         color: 'white',
+        fontFamily: 'Inter-SemiBold'
     },
 });

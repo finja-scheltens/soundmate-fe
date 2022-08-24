@@ -75,7 +75,7 @@ export default function LoginScreen({ navigation }: any) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground source={require("../assets/images/login-background.png")} resizeMode="cover" style={styles.background} />
+            <ImageBackground source={require("../assets/images/login-background.png")} resizeMode="stretch" style={styles.background} />
             <View style={styles.innerContainer}>
                 <Image source={require("../assets/images/logo.png")} style={styles.logo} />
                 <View style={styles.textContainer}>
@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: 'transparent',
-        paddingVertical: 100,
+        paddingTop: '28%',
+        paddingBottom: '22%',
         width: '100%'
     },
     background: {
@@ -110,26 +111,25 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         justifyContent: "center",
-
     },
     logo: {
-        width: 220,
-        height: 220,
-        marginTop: 30
+        width: "100%",
+        height: '40%',
+        resizeMode: 'contain'
     },
     textContainer: {
         backgroundColor: 'transparent',
         alignItems: 'center',
     },
     title: {
-        fontSize: 30,
-        fontWeight: 'bold',
+        fontSize: 35,
+        fontFamily: 'Inter-ExtraBold'
     },
     text: {
-        fontSize: 18,
+        fontSize: 16,
         textAlign: 'center',
-        marginTop: 10,
-        paddingHorizontal: 20
-
+        marginTop: 15,
+        paddingHorizontal: '6%',
+        fontFamily: 'Inter-Regular'
     }
 });
