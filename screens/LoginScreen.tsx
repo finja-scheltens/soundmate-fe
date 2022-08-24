@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: AppColors.DARK_GREY,
+        backgroundColor: AppColors.GREY_900,
     },
     innerContainer: {
         flex: 1,
