@@ -1,7 +1,7 @@
-import {ADD_TOKEN} from '../actions/token';
+import { ADD_TOKEN } from "../actions/token";
 
 const initialState = {
-  token: '',
+  token: "",
 };
 
 export default (state = initialState, action: any) => {
