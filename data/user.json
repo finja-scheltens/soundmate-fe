@@ -3,5 +3,12 @@
   "userName": "Malin",
   "eMail": "fin.ja@hotmail.com",
   "genres": ["Indie", "Hip Hop", "Songwriter"],
-  "artists": ["L'aupaire", "RY X", "Post Malone"]
+  "artists": [
+    "L'aupaire",
+    "RY X",
+    "Post Malone",
+    "L'aupaire",
+    "RY X",
+    "Post Malone"
+  ]
 }
