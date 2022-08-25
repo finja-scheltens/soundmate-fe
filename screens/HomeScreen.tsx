@@ -1,4 +1,6 @@
+import * as React from "react";
 import { StyleSheet, Image, View, ScrollView } from "react-native";
+import { useScrollToTop } from "@react-navigation/native";
 import { Text } from "../components/Themed";
 import { AppColors } from "../constants/AppColors";
 import { RootTabScreenProps } from "../types";
@@ -9,8 +11,11 @@ import ListItem from "../components/ListItem";
 const user = require("../data/user.json");
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<"Home">) {
+  const ref = React.useRef(null);
+  useScrollToTop(ref);
+
   return (
-    <ScrollView style={styles.scrollContainer}>
+    <ScrollView ref={ref} style={styles.scrollContainer}>
       <View style={styles.profileHeaderContainer}>
         <Image
           source={require("../assets/images/profile.jpeg")}
