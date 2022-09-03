@@ -1,14 +1,24 @@
 import * as React from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import {
+  RefreshControl,
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableHighlight,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import MatchItem from "../components/MatchItem";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../types";
 
-import { useScrollToTop } from "@react-navigation/native";
+import MatchItem from "../components/MatchItem";
 import { AppColors } from "../constants/AppColors";
 
-const users = require("../data/users.json");
+import { useScrollToTop } from "@react-navigation/native";
 
+const users = require("../data/users.json");
 const numColumns = 2;
+type Props = NativeStackScreenProps<RootStackParamList, "Detail">;
 
 const formatData = (
   data: { key: string; empty: boolean }[],
@@ -28,19 +38,21 @@ const formatData = (
   return data;
 };
 
-const renderItem = ({ item }: any) => {
-  return (
-    <MatchItem
-      userName={item.userName}
-      imageSource={{ uri: "https://picsum.photos/200" }}
-      style={item.empty ? styles.itemInvisible : styles.matchItem}
-    />
-  );
+const wait = (timeout: number | undefined) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-export default function MatchesScreen() {
+export default function MatchesScreen({ navigation }: Props) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+    //TODO: api call
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -48,9 +60,24 @@ export default function MatchesScreen() {
         <Text style={styles.headline}>Matches</Text>
       </SafeAreaView>
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         ref={ref}
         data={formatData(users, numColumns)}
-        renderItem={renderItem}
+        renderItem={({ item }: any) => (
+          <TouchableHighlight
+            style={styles.touchable}
+            underlayColor="transparent"
+            onPress={() => navigation.push("Detail", item)}
+          >
+            <MatchItem
+              userName={item.userName}
+              imageSource={{ uri: "https://picsum.photos/200" }}
+              style={item.empty ? styles.itemInvisible : styles.matchItem}
+            />
+          </TouchableHighlight>
+        )}
         numColumns={numColumns}
         style={styles.matches}
         ListHeaderComponent={() => (
@@ -66,6 +93,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     paddingBottom: 20,
+  },
+  touchable: {
+    flex: 1,
   },
   headline: {
     fontFamily: "Inter-Bold",

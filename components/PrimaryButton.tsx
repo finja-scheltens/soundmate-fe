@@ -3,11 +3,12 @@ import { AppColors } from "../constants/AppColors";
 interface Props {
   onPress: () => void;
   title?: string;
+  style?: any;
 }
 
-export default function PrimaryButton({ onPress, title }: Props) {
+export default function PrimaryButton({ onPress, title, style }: Props) {
   return (
-    <Pressable style={styles.button} onPress={onPress}>
+    <Pressable style={[styles.button, style]} onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
     </Pressable>
   );
