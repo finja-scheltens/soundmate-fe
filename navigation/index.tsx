@@ -30,6 +30,7 @@ import {
 import LinkingConfiguration from "./LinkingConfiguration";
 import ChatScreen from "../screens/ChatScreen";
 import LoginScreen from "../screens/LoginScreen";
+import DetailScreen from "../screens/DetailScreen";
 
 export default function Navigation({
   colorScheme,
@@ -63,6 +64,11 @@ function RootNavigator() {
       <Stack.Screen
         name="Root"
         component={BottomTabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
