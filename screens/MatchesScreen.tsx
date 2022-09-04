@@ -6,6 +6,8 @@ import {
   Text,
   FlatList,
   TouchableHighlight,
+  Image,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -59,31 +61,52 @@ export default function MatchesScreen({ navigation }: Props) {
       <SafeAreaView>
         <Text style={styles.headline}>Matches</Text>
       </SafeAreaView>
-      <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ref={ref}
-        data={formatData(users, numColumns)}
-        renderItem={({ item }: any) => (
-          <TouchableHighlight
-            style={styles.touchable}
-            underlayColor="transparent"
-            onPress={() => navigation.push("Detail", item)}
-          >
-            <MatchItem
-              userName={item.userName}
-              imageSource={{ uri: "https://picsum.photos/200" }}
-              style={item.empty ? styles.itemInvisible : styles.matchItem}
+      {users ? (
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ref={ref}
+          data={formatData(users, numColumns)}
+          renderItem={({ item }: any) => (
+            <TouchableHighlight
+              style={styles.touchable}
+              underlayColor="transparent"
+              onPress={() => navigation.push("Detail", item)}
+            >
+              <MatchItem
+                userName={item.userName}
+                imageSource={{ uri: "https://picsum.photos/200" }}
+                style={item.empty ? styles.itemInvisible : styles.matchItem}
+              />
+            </TouchableHighlight>
+          )}
+          numColumns={numColumns}
+          style={styles.matches}
+          ListHeaderComponent={() => (
+            <Text style={styles.numberMatches}>{users.length} Vorschläge</Text>
+          )}
+        />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{ alignItems: "center" }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View style={styles.noMatchesContainer}>
+            <Image
+              source={require("../assets/images/empty-state.png")}
+              style={styles.noMatchesImage}
             />
-          </TouchableHighlight>
-        )}
-        numColumns={numColumns}
-        style={styles.matches}
-        ListHeaderComponent={() => (
-          <Text style={styles.numberMatches}>{users.length} Vorschläge</Text>
-        )}
-      />
+            <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
+            <Text style={styles.noMatchesText}>
+              Leider konnten wir keine passenden Matches finden. Probiere es
+              später erneut oder lade die Seite neu!
+            </Text>
+          </View>
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -105,7 +128,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   itemInvisible: {
-    backgroundColor: "red",
     opacity: 0,
   },
   numberMatches: {
@@ -121,5 +143,36 @@ const styles = StyleSheet.create({
   matchItem: {
     marginHorizontal: 8,
     marginVertical: 8,
+  },
+  noMatchesContainer: {
+    paddingTop: 100,
+    alignItems: "center",
+  },
+  noMatchesImage: {
+    height: "85%",
+    resizeMode: "contain",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 2,
+    opacity: 0.15,
+  },
+  noMatchesHeadline: {
+    fontFamily: "Inter-Bold",
+    fontSize: 18,
+    color: AppColors.GREY_900,
+    marginTop: 20,
+  },
+  noMatchesText: {
+    marginTop: 10,
+    marginHorizontal: 34,
+    fontFamily: "Inter-Regular",
+    color: AppColors.GREY_900,
+    fontSize: 16,
+    lineHeight: 20,
+    textAlign: "center",
   },
 });
