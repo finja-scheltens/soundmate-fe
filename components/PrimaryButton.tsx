@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 3,
     backgroundColor: AppColors.PRIMARY,
-    width: "90%",
   },
   text: {
     fontSize: 16,
