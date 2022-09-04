@@ -30,7 +30,7 @@ export type RootTabParamList = {
   Login: undefined;
   Home: undefined;
   Matches: undefined;
-  Chat: undefined;
+  AppInfo: undefined;
   Detail: undefined;
   UserInfo: undefined;
 };

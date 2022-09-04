@@ -40,9 +40,9 @@ const linking: LinkingOptions<RootStackParamList> = {
               MatchesScreen: "two",
             },
           },
-          Chat: {
+          AppInfo: {
             screens: {
-              ChatScreen: "three",
+              AppInfoScreen: "three",
             },
           },
         },
