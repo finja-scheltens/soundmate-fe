@@ -7,10 +7,11 @@ import { RootTabScreenProps } from "../types";
 import { Key } from "react";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
+import PrimaryButton from "../components/PrimaryButton";
 
 const user = require("../data/user.json");
 
-export default function HomeScreen({ navigation }: RootTabScreenProps<"Home">) {
+export default function HomeScreen({ navigation }: any) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
 
@@ -23,8 +24,19 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<"Home">) {
         />
       </View>
       <View style={styles.contentContainer}>
-        <Text style={styles.userName}>Malin</Text>
-        <Text style={styles.eMail}>fin.ja@hotmail.com</Text>
+        <View style={styles.userData}>
+          <View>
+            <Text style={styles.userName}>Malin</Text>
+            <Text style={styles.eMail}>fin.ja@hotmail.com</Text>
+          </View>
+          <View>
+            <PrimaryButton
+              title="Edit"
+              onPress={() => navigation.push("UserInfo", { isLogin: false })}
+              style={{ paddingVertical: 10, paddingHorizontal: 28 }}
+            />
+          </View>
+        </View>
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Genres</Text>
           <View style={styles.genres}>
@@ -82,11 +94,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "white",
   },
+  userData: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 25,
+  },
   userName: {
     fontFamily: "Inter-Bold",
     fontSize: 26,
     color: AppColors.GREY_900,
-    marginTop: 25,
   },
   eMail: {
     fontFamily: "Inter-Regular",

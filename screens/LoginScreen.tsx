@@ -61,7 +61,7 @@ export default function LoginScreen({ navigation }: any) {
           console.log("error", error.message);
         });
 
-      setTimeout(() => navigation.navigate("Root"), 500);
+      navigation.replace("UserInfo", { isLogin: true });
 
       dispatch(tokenStore.addToken(token));
     }
@@ -91,6 +91,7 @@ export default function LoginScreen({ navigation }: any) {
             promptAsync();
           }}
           title={"Connect with Spotify"}
+          style={{ width: "90%" }}
         />
       </View>
     </View>

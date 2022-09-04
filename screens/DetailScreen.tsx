@@ -51,7 +51,7 @@ export default function HomeScreen({ route, navigation }: Props | any) {
           >
             <Ionicons
               name="chevron-back"
-              size={30}
+              size={28}
               color={AppColors.GREY_900}
             />
           </Pressable>
@@ -118,15 +118,14 @@ const styles = StyleSheet.create({
   backButton: {
     backgroundColor: "white",
     zIndex: 100,
-    width: 45,
-    height: 45,
+    width: 40,
+    height: 40,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 20,
     marginTop: 10,
-    opacity: 0.7,
-    borderColor: AppColors.GREY_500,
+    borderColor: AppColors.GREY_300,
     borderWidth: 0.5,
   },
   contentContainer: {
@@ -173,5 +172,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 50,
     alignSelf: "center",
+    width: "90%",
   },
 });
