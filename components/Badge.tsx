@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.GREY_200,
     alignItems: "center",
     alignSelf: "flex-start",
-    paddingVertical: 6,
+    paddingVertical: 7,
     paddingHorizontal: 12,
     borderRadius: 6,
   },

@@ -37,7 +37,6 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
   const [text, onChangeText] = React.useState("");
 
   const isLogin = route.params.isLogin;
-  console.log("isLogin", isLogin);
 
   return (
     <DismissKeyboard>

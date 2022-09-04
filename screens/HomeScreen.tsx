@@ -7,7 +7,7 @@ import { RootTabScreenProps } from "../types";
 import { Key } from "react";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
-import PrimaryButton from "../components/PrimaryButton";
+import SecondaryButton from "../components/SecondaryButton";
 
 const user = require("../data/user.json");
 
@@ -30,10 +30,9 @@ export default function HomeScreen({ navigation }: any) {
             <Text style={styles.eMail}>fin.ja@hotmail.com</Text>
           </View>
           <View>
-            <PrimaryButton
-              title="Edit"
+            <SecondaryButton
+              title="Ändern"
               onPress={() => navigation.push("UserInfo", { isLogin: false })}
-              style={{ paddingVertical: 10, paddingHorizontal: 28 }}
             />
           </View>
         </View>

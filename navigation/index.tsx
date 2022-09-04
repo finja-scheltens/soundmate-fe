@@ -28,7 +28,7 @@ import {
   RootTabScreenProps,
 } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
-import ChatScreen from "../screens/ChatScreen";
+import AppInfoScreen from "../screens/AppInfoScreen";
 import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
@@ -108,7 +108,9 @@ function BottomTabNavigator() {
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<"Home">) => ({
           tabBarIcon: ({ focused }) => (
-            <TabBarIcon name={focused ? "home" : "home-outline"} />
+            <TabBarIcon
+              name={focused ? "person-circle" : "person-circle-outline"}
+            />
           ),
         })}
       />
@@ -122,11 +124,15 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Chat"
-        component={ChatScreen}
+        name="AppInfo"
+        component={AppInfoScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabBarIcon name={focused ? "chatbubble" : "chatbubble-outline"} />
+            <TabBarIcon
+              name={
+                focused ? "information-circle" : "information-circle-outline"
+              }
+            />
           ),
         }}
       />
@@ -140,11 +146,5 @@ function BottomTabNavigator() {
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof Ionicons>["name"];
 }) {
-  return (
-    <Ionicons
-      size={props.name == "play" || props.name == "play-outline" ? 35 : 30}
-      style={{ marginBottom: -3 }}
-      {...props}
-    />
-  );
+  return <Ionicons size={35} style={{ marginBottom: -3 }} {...props} />;
 }

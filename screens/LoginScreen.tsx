@@ -90,7 +90,7 @@ export default function LoginScreen({ navigation }: any) {
           onPress={() => {
             promptAsync();
           }}
-          title={"Connect with Spotify"}
+          title="Mit Spotify verbinden"
           style={{ width: "90%" }}
         />
       </View>
