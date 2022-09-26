@@ -1,10 +1,9 @@
 import { ImageBackground, Image, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useEffect, useState } from "react";
-import { ResponseType, useAuthRequest } from "expo-auth-session";
+import { exchangeCodeAsync, ResponseType, useAuthRequest, makeRedirectUri } from "expo-auth-session";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import * as tokenStore from "../store/actions/token";
 import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 
@@ -13,59 +12,91 @@ const discovery = {
   tokenEndpoint: "https://accounts.spotify.com/api/token",
 };
 
+const state = "23w4rgf7izjfggt6i6jr34wt987lig"
+
 export default function LoginScreen({ navigation }: any) {
   const dispatch = useDispatch();
-  const [token, setToken] = useState("");
+  const [authCode, setAuthCode] = useState('');
+  const [tokenResponse, setTokenResponse] = useState({});
+  const [codeVerifier, setCodeVerifier] = useState('');
 
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      responseType: ResponseType.Token,
-      clientId: "19e3ddbf461f4f44997f1ffe82a6eddb",
-      scopes: [
-        "user-read-currently-playing",
-        "user-read-recently-played",
-        "user-read-playback-state",
-        "user-top-read",
-        "user-modify-playback-state",
-        "streaming",
-        "user-read-email",
-        "user-read-private",
-      ],
-      usePKCE: false,
-      redirectUri: "exp://127.0.0.1:19000/",
-    },
-    discovery
-  );
+  const [request, response, promptAsync] =
+      useAuthRequest(
+          {
+            responseType: ResponseType.Code,
+            clientId: '83bf8873115447d893923470b70d209a',
+            scopes: [
+              'user-read-currently-playing',
+              'user-read-recently-played',
+              'user-read-playback-state',
+              'user-top-read',
+              'user-modify-playback-state',
+              'streaming',
+              'user-read-email',
+              'user-read-private',
+            ],
+            usePKCE: true,
+            redirectUri: makeRedirectUri(),
+            state: state,
+          },
+          discovery,
+      );
 
   useEffect(() => {
-    if (response?.type === "success") {
-      const { access_token } = response.params;
-      setToken(access_token);
+    if (response?.type === 'success') {
+      console.log("spotify request success")
+      if (response.params.state === state) {
+        console.log("state param correct")
+        const {code} = response.params;
+        setAuthCode(code);
+      } else {
+        // TODO: error
+      }
+    }
+    console.log(request);
+    if(request != null){
+      console.log("codeverifier: " + request.codeVerifier);
+      setCodeVerifier(request.codeVerifier? request.codeVerifier : '');
     }
   }, [response]);
 
   useEffect(() => {
-    if (token) {
-      axios("https://api.spotify.com/v1/me/top/tracks?time_range=short_term", {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log("error", error.message);
-        });
+    if (authCode) {
+      console.log("authcode: " +  authCode)
+      console.log("codeverifier: " + codeVerifier);
+      const tokenResultPromise = async () => {
+        console.log("async method started");
+        const tokenResult = await exchangeCodeAsync(
+            {
+              code: authCode,
+              redirectUri: makeRedirectUri(),
+              clientId: '83bf8873115447d893923470b70d209a',
+              extraParams: {
+                code_verifier: codeVerifier ? codeVerifier : ''
+              },
+            },
+            {
+              tokenEndpoint: discovery.tokenEndpoint
+            }
+        );
+        setTokenResponse(tokenResult);
+      }
 
-      setTimeout(() => navigation.navigate("Root"), 500);
-
-      dispatch(tokenStore.addToken(token));
+      tokenResultPromise().catch(() => console.log("exchange code failed"));
     }
   });
+
+  useEffect(() => {
+    if (Object.keys(tokenResponse).length != 0) {
+      console.log(tokenResponse)
+      axios.post('http://10.0.2.2:8080/register', tokenResponse).then((response) => {
+        console.log(response);
+        if(response.status != 200){
+          console.log(response);
+        }
+      }).catch(()=> console.log("Promise Rejected"));
+    }
+  })
 
   return (
     <View style={styles.container}>
