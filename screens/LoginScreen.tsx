@@ -1,8 +1,8 @@
 import { ImageBackground, Image, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useEffect, useState } from "react";
-import { ResponseType, useAuthRequest } from "expo-auth-session";
-import axios from "axios";
+import {makeRedirectUri, ResponseType, useAuthRequest} from "expo-auth-session";
+import axios, {AxiosResponse} from "axios";
 import { useDispatch } from "react-redux";
 import * as tokenStore from "../store/actions/token";
 import PrimaryButton from "../components/PrimaryButton";
@@ -13,14 +13,25 @@ const discovery = {
   tokenEndpoint: "https://accounts.spotify.com/api/token",
 };
 
+class JwtResponse {
+  jwtToken: string
+
+  constructor(jwtToken: string) {
+    this.jwtToken = jwtToken;
+  }
+}
+
 export default function LoginScreen({ navigation }: any) {
   const dispatch = useDispatch();
-  const [token, setToken] = useState("");
+  const [spotifyAuthCode, setSpotifyAuthCode] = useState("");
+  const [backendJwtToken, setBackendJwtToken] = useState("");
+
+  const soundmateRedirectUri = makeRedirectUri();
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      responseType: ResponseType.Token,
-      clientId: "19e3ddbf461f4f44997f1ffe82a6eddb",
+      responseType: ResponseType.Code,
+      clientId: "83bf8873115447d893923470b70d209a",
       scopes: [
         "user-read-currently-playing",
         "user-read-recently-played",
@@ -32,30 +43,32 @@ export default function LoginScreen({ navigation }: any) {
         "user-read-private",
       ],
       usePKCE: false,
-      redirectUri: "exp://127.0.0.1:19000/",
+      redirectUri: soundmateRedirectUri
     },
     discovery
   );
 
   useEffect(() => {
     if (response?.type === "success") {
-      const { access_token } = response.params;
-      setToken(access_token);
+      console.log(response)
+      const code = response.params.code;
+      setSpotifyAuthCode(code);
     }
   }, [response]);
 
   useEffect(() => {
-    if (token) {
-      axios("https://api.spotify.com/v1/me/top/tracks?time_range=short_term", {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+    if (spotifyAuthCode) {
+      console.log(spotifyAuthCode)
+      axios("http://192.168.0.29:8080/api/auth/spotify", {
+        method: "POST",
+        data: {
+          authCode: spotifyAuthCode,
+          redirectUri: soundmateRedirectUri
         },
       })
-        .then((response) => {
+        .then((response:AxiosResponse<JwtResponse>) => {
           console.log(response.data);
+          setBackendJwtToken(response.data.jwtToken)
         })
         .catch((error) => {
           console.log("error", error.message);
@@ -63,7 +76,6 @@ export default function LoginScreen({ navigation }: any) {
 
       navigation.replace("UserInfo", { isLogin: true });
 
-      dispatch(tokenStore.addToken(token));
     }
   });
 
