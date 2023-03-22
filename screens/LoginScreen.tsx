@@ -8,6 +8,8 @@ import * as tokenStore from "../store/actions/token";
 import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 
+import * as SecureStore from 'expo-secure-store';
+
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
   tokenEndpoint: "https://accounts.spotify.com/api/token",
@@ -19,6 +21,10 @@ class JwtResponse {
   constructor(jwtToken: string) {
     this.jwtToken = jwtToken;
   }
+}
+
+async function saveToken(value: string) {
+  await SecureStore.setItemAsync("token", value);
 }
 
 export default function LoginScreen({ navigation }: any) {
@@ -58,8 +64,7 @@ export default function LoginScreen({ navigation }: any) {
 
   useEffect(() => {
     if (spotifyAuthCode) {
-      console.log(spotifyAuthCode)
-      axios("http://192.168.0.29:8080/api/auth/spotify", {
+      axios("https://soundmate-spring-boot-soundmate-backend.azuremicroservices.io/api/auth/spotify", {
         method: "POST",
         data: {
           authCode: spotifyAuthCode,
@@ -67,8 +72,9 @@ export default function LoginScreen({ navigation }: any) {
         },
       })
         .then((response:AxiosResponse<JwtResponse>) => {
-          console.log(response.data);
-          setBackendJwtToken(response.data.jwtToken)
+          const jwtToken = response.data.jwtToken;
+          setBackendJwtToken(jwtToken);
+          saveToken(jwtToken);
         })
         .catch((error) => {
           console.log("error", error.message);
@@ -76,8 +82,8 @@ export default function LoginScreen({ navigation }: any) {
 
       navigation.replace("UserInfo", { isLogin: true });
 
-    }
-  });
+      }
+  }, [spotifyAuthCode]);
 
   return (
     <View style={styles.container}>
