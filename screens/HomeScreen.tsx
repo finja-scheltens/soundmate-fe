@@ -1,13 +1,16 @@
 import * as React from "react";
 import { StyleSheet, Image, View, ScrollView } from "react-native";
-import { useScrollToTop } from "@react-navigation/native";
 import { Text } from "../components/Themed";
+import { useScrollToTop } from "@react-navigation/native";
+import { useEffect, useState } from "react";
 import { AppColors } from "../constants/AppColors";
 import { RootTabScreenProps } from "../types";
 import { Key } from "react";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
 import SecondaryButton from "../components/SecondaryButton";
+import axios, { AxiosResponse } from "axios";
+import * as SecureStore from "expo-secure-store";
 
 const user = require("../data/user.json");
 
@@ -15,33 +18,67 @@ export default function HomeScreen({ navigation }: any) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
 
+  const [usersData, setUsersData] = useState<any>([]);
+  const [topArtists, setTopArtists] = useState<any>([]);
+  const [topGenres, setTopGenres] = useState<any>([]);
+
+  useEffect(() => {
+    const getProfileData = async () => {
+      const token = await SecureStore.getItemAsync("token");
+
+      axios("http://192.168.178.26:8080/api/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(response => {
+          setUsersData(response.data);
+          setTopArtists(response.data.topArtists);
+          setTopGenres(response.data.topGenres);
+        })
+        .catch(error => {
+          console.log("error", error.message);
+        });
+    };
+    getProfileData();
+  }, []);
+
   return (
     <ScrollView ref={ref} style={styles.scrollContainer}>
       <View style={styles.profileHeaderContainer}>
         <Image
-          source={require("../assets/images/profile.jpeg")}
+          source={{ uri: usersData.profilePictureUrl }}
           style={styles.profileHeaderImage}
         />
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.userData}>
           <View>
-            <Text style={styles.userName}>Malin</Text>
-            <Text style={styles.eMail}>fin.ja@hotmail.com</Text>
+            <Text style={styles.userName}>
+              {usersData.name}, {usersData.age}
+            </Text>
+            <Text style={styles.eMail}>{usersData.contactInfo}</Text>
           </View>
           <View>
             <SecondaryButton
               title="Ändern"
-              onPress={() => navigation.push("UserInfo", { isLogin: false })}
+              onPress={() =>
+                navigation.navigate("UserInfo", { isLogin: false })
+              }
             />
           </View>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Genres</Text>
           <View style={styles.genres}>
-            {user.genres.map(
-              (genre: string | undefined, index: Key | null | undefined) => (
-                <Badge key={index} text={genre} style={styles.genreBadge} />
+            {topGenres.map(
+              (genre: any | undefined, index: Key | null | undefined) => (
+                <Badge
+                  key={index}
+                  text={genre.name}
+                  style={styles.genreBadge}
+                />
               )
             )}
           </View>
@@ -49,15 +86,13 @@ export default function HomeScreen({ navigation }: any) {
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Künstler</Text>
           <View style={styles.artists}>
-            {user.artists.map(
-              (artist: string | undefined, index: Key | null | undefined) => (
-                <ListItem
-                  key={index}
-                  text={artist}
-                  imageSource={require("../assets/images/artist.jpg")}
-                />
-              )
-            )}
+            {topArtists.map((artist: any, index: Key | null | undefined) => (
+              <ListItem
+                key={index}
+                text={artist.name}
+                imageSource={{ uri: artist.imageUrl }}
+              />
+            ))}
           </View>
         </View>
       </View>

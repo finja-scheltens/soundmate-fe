@@ -33,17 +33,29 @@ import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
 
+import * as SecureStore from "expo-secure-store";
+
 export default function Navigation({
   colorScheme,
 }: {
   colorScheme: ColorSchemeName;
 }) {
+  const [isSignedIn, setSignedIn] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkUser = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) setSignedIn(true);
+    };
+    checkUser();
+  }, []);
+
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
-      <RootNavigator />
+      {isSignedIn ? <SignedInNavigator /> : <RootNavigator />}
     </NavigationContainer>
   );
 }
@@ -71,6 +83,31 @@ function RootNavigator() {
         name="UserInfo"
         component={UserInfoScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function SignedInNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Root"
+        component={BottomTabNavigator}
+        options={{ headerShown: false, animationTypeForReplace: "pop" }}
+      />
+      <Stack.Screen
+        name="UserInfo"
+        component={UserInfoScreen}
+        options={{
+          headerShown: false,
+          animation: "slide_from_bottom",
+        }}
       />
       <Stack.Screen
         name="Detail"
