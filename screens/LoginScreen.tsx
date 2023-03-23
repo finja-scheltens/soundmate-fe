@@ -1,14 +1,18 @@
 import { ImageBackground, Image, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
 import { useEffect, useState } from "react";
-import {makeRedirectUri, ResponseType, useAuthRequest} from "expo-auth-session";
-import axios, {AxiosResponse} from "axios";
+import {
+  makeRedirectUri,
+  ResponseType,
+  useAuthRequest,
+} from "expo-auth-session";
+import axios, { AxiosResponse } from "axios";
 import { useDispatch } from "react-redux";
 import * as tokenStore from "../store/actions/token";
 import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
@@ -16,7 +20,7 @@ const discovery = {
 };
 
 class JwtResponse {
-  jwtToken: string
+  jwtToken: string;
 
   constructor(jwtToken: string) {
     this.jwtToken = jwtToken;
@@ -47,16 +51,16 @@ export default function LoginScreen({ navigation }: any) {
         "streaming",
         "user-read-email",
         "user-read-private",
+        " user-library-read",
       ],
       usePKCE: false,
-      redirectUri: soundmateRedirectUri
+      redirectUri: soundmateRedirectUri,
     },
     discovery
   );
 
   useEffect(() => {
     if (response?.type === "success") {
-      console.log(response)
       const code = response.params.code;
       setSpotifyAuthCode(code);
     }
@@ -64,25 +68,24 @@ export default function LoginScreen({ navigation }: any) {
 
   useEffect(() => {
     if (spotifyAuthCode) {
-      axios("https://soundmate-spring-boot-soundmate-backend.azuremicroservices.io/api/auth/spotify", {
+      axios("http://192.168.178.26:8080/api/auth/spotify", {
         method: "POST",
         data: {
           authCode: spotifyAuthCode,
-          redirectUri: soundmateRedirectUri
+          redirectUri: soundmateRedirectUri,
         },
       })
-        .then((response:AxiosResponse<JwtResponse>) => {
+        .then((response: AxiosResponse<JwtResponse>) => {
           const jwtToken = response.data.jwtToken;
           setBackendJwtToken(jwtToken);
           saveToken(jwtToken);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log("error", error.message);
         });
 
       navigation.replace("UserInfo", { isLogin: true });
-
-      }
+    }
   }, [spotifyAuthCode]);
 
   return (
