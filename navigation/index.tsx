@@ -77,12 +77,15 @@ function RootNavigator() {
       <Stack.Screen
         name="Root"
         component={BottomTabNavigator}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, animationTypeForReplace: "pop" }}
       />
       <Stack.Screen
         name="UserInfo"
         component={UserInfoScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          animation: "fade",
+        }}
       />
       <Stack.Screen
         name="Detail"
@@ -106,7 +109,7 @@ function SignedInNavigator() {
         component={UserInfoScreen}
         options={{
           headerShown: false,
-          animation: "slide_from_bottom",
+          animation: "fade",
         }}
       />
       <Stack.Screen

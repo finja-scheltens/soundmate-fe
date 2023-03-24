@@ -7,6 +7,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Pressable,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -52,14 +53,21 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
         age: userAge,
         contactInfo: instaName,
       },
-    }).catch(error => {
-      console.log("error", error.message);
-    });
+    })
+      .then(() => {
+        setTimeout(() => navigation.replace("Root"), 500);
+      })
+      .catch(error => {
+        console.log("error", error.message);
+      });
   }
 
-  async function submit(navigation: any) {
-    updateProfile();
-    setTimeout(() => navigation.replace("Root"), 500);
+  async function submit() {
+    if (userName == "" || userAge == "" || instaName == "") {
+      Alert.alert("Fülle bitte alle Felder aus.");
+    } else {
+      updateProfile();
+    }
   }
 
   useEffect(() => {
@@ -104,7 +112,6 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
             value={userName}
             placeholder="Dein Name"
             placeholderTextColor={AppColors.GREY_500}
-            autoCapitalize="none"
           />
 
           <Text style={styles.infoHeadline}>Wie alt bist du?</Text>
@@ -115,6 +122,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
             placeholder="Dein Alter"
             placeholderTextColor={AppColors.GREY_500}
             autoCapitalize="none"
+            keyboardType="number-pad"
           />
 
           <Text style={styles.infoHeadline}>
@@ -132,7 +140,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
         <PrimaryButton
           title="Speichern"
           style={styles.submitButton}
-          onPress={() => submit(navigation)}
+          onPress={submit}
         />
       </View>
     </DismissKeyboard>
