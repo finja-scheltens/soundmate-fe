@@ -12,17 +12,18 @@ export default function HomeScreen() {
         style={styles.thanksImage}
       />
       <Text style={styles.text}>
-        Willkommen bei SoundMate! Danke, dass du unsere App testest. Um unsere
-        Forschungsfrage beantworten zu können, bitten wir dich, dir ein paar
-        Minuten Zeit zu nehmen und unsere Umfrage auszufüllen.
+        Danke, dass du unsere App testest. Um unsere Forschungsfrage zu
+        beantworten, bitten wir dich am Ende der Testphase, unsere Umfrage
+        auszufüllen. Dafür kommen wir nochmal mit ein paar Informationen auf
+        dich zu. Happy Matching!
       </Text>
-      <PrimaryButton
+      {/* <PrimaryButton
         title="Zur Umfrage"
         style={styles.surveyButton}
         onPress={() => {
           Linking.openURL("https://forms.gle/hbbFwenaYP74RRvd6");
         }}
-      />
+      /> */}
     </View>
   );
 }
