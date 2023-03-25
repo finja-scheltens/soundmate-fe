@@ -6,12 +6,17 @@ import {
   ImageBackground,
   Pressable,
   SafeAreaView,
+  Linking,
+  ActivityIndicator,
 } from "react-native";
 import { Text } from "../components/Themed";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import * as SecureStore from "expo-secure-store";
 
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
@@ -28,16 +33,46 @@ type Props = NativeStackScreenProps<RootStackParamList, "Detail">;
 export default function HomeScreen({ route, navigation }: Props | any) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
+  const [matchData, setMatchData] = useState<any>([]);
+  const [topArtists, setTopArtists] = useState<any>([]);
+  const [topGenres, setTopGenres] = useState<any>([]);
+  const [isLoading, setLoading] = useState(false);
 
-  const item = route.params;
+  const profileId = route.params;
 
-  return (
+  useEffect(() => {
+    const getMatchData = async () => {
+      setLoading(true);
+      const token = await SecureStore.getItemAsync("token");
+
+      axios(`http://192.168.178.26:8080/api/profile/${profileId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(response => {
+          setMatchData(response.data);
+          setTopArtists(response.data.topArtists);
+          setTopGenres(response.data.topGenres);
+        })
+        .catch(error => {
+          console.log("error", error.message);
+        })
+        .finally(() => setLoading(false));
+    };
+    getMatchData();
+  }, []);
+
+  return isLoading ? (
+    <ActivityIndicator style={styles.loading} />
+  ) : (
     <View style={styles.scrollContainer}>
       <ScrollView ref={ref} style={styles.scrollContainer}>
         <View style={styles.profileHeaderContainer}>
           <SafeAreaView></SafeAreaView>
           <ImageBackground
-            source={{ uri: "https://picsum.photos/200" }}
+            source={{ uri: matchData.profilePictureUrl }}
             style={styles.profileHeaderImage}
             imageStyle={{
               borderRadius: 30,
@@ -57,12 +92,19 @@ export default function HomeScreen({ route, navigation }: Props | any) {
           </Pressable>
         </View>
         <View style={styles.contentContainer}>
-          <Text style={styles.userName}>{item.userName}</Text>
-          <Text style={styles.eMail}>fin.ja@hotmail.com</Text>
+          <Text style={styles.userName}>{matchData.name}</Text>
+          <View style={styles.instaInfo}>
+            <Ionicons
+              name="logo-instagram"
+              size={18}
+              color={AppColors.GREY_500}
+            />
+            <Text style={styles.eMail}>{matchData.contactInfo}</Text>
+          </View>
           <View style={styles.infoContainer}>
-            <Text style={styles.genreHeadline}>Deine Genres</Text>
+            <Text style={styles.genreHeadline}>Top Genres</Text>
             <View style={styles.genres}>
-              {user.genres.map(
+              {topGenres.map(
                 (genre: string | undefined, index: Key | null | undefined) => (
                   <Badge key={index} text={genre} style={styles.genreBadge} />
                 )
@@ -70,9 +112,9 @@ export default function HomeScreen({ route, navigation }: Props | any) {
             </View>
           </View>
           <View style={styles.infoContainer}>
-            <Text style={styles.genreHeadline}>Deine Top Künstler</Text>
+            <Text style={styles.genreHeadline}>Top Künstler</Text>
             <View style={styles.artists}>
-              {user.artists.map(
+              {topArtists.map(
                 (artist: string | undefined, index: Key | null | undefined) => (
                   <ListItem
                     key={index}
@@ -86,15 +128,27 @@ export default function HomeScreen({ route, navigation }: Props | any) {
         </View>
       </ScrollView>
       <PrimaryButton
-        title="Say hello"
+        title="Sag Hallo auf Instagram"
         style={styles.chatButton}
-        onPress={() => {}}
+        onPress={() => {
+          Linking.openURL(
+            `instagram://user?username=${matchData.contactInfo}`
+          ).catch(() => {
+            Linking.openURL(
+              `https://www.instagram.com/${matchData.contactInfo}`
+            );
+          });
+        }}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   scrollContainer: {
     flex: 1,
     backgroundColor: "white",
@@ -138,11 +192,17 @@ const styles = StyleSheet.create({
     color: AppColors.GREY_900,
     marginTop: 25,
   },
+  instaInfo: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
   eMail: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
     color: AppColors.GREY_500,
-    marginTop: 8,
+    marginLeft: 6,
   },
   infoContainer: {
     backgroundColor: "white",

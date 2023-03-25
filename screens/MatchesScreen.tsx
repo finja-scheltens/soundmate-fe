@@ -8,10 +8,14 @@ import {
   TouchableHighlight,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import * as SecureStore from "expo-secure-store";
 
 import MatchItem from "../components/MatchItem";
 import { AppColors } from "../constants/AppColors";
@@ -41,19 +45,50 @@ const formatData = (
 };
 
 const wait = (timeout: number | undefined) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
+  return new Promise(resolve => setTimeout(resolve, timeout));
 };
 
 export default function MatchesScreen({ navigation }: Props) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
+  const [matches, setMatches] = useState<any>([]);
+  const [numberOfMatches, setNumberOfMatches] = useState(0);
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+
+  async function getMatches() {
+    const token = await SecureStore.getItemAsync("token");
+
+    axios("http://192.168.178.26:8080/api/match", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => {
+        setNumberOfMatches(response.data.length);
+        setMatches(response.data);
+      })
+      .catch(error => {
+        console.log("error", error.message);
+      })
+      .finally(() =>
+        setTimeout(() => {
+          setLoading(false);
+        }, 500)
+      );
+  }
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-    //TODO: api call
+    getMatches();
+    wait(1000).then(() => setRefreshing(false));
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    getMatches();
   }, []);
 
   return (
@@ -61,51 +96,59 @@ export default function MatchesScreen({ navigation }: Props) {
       <SafeAreaView>
         <Text style={styles.headline}>Matches</Text>
       </SafeAreaView>
-      {users ? (
-        <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ref={ref}
-          data={formatData(users, numColumns)}
-          renderItem={({ item }: any) => (
-            <TouchableHighlight
-              style={styles.touchable}
-              underlayColor="transparent"
-              onPress={() => navigation.push("Detail", item)}
-            >
-              <MatchItem
-                userName={item.userName}
-                imageSource={{ uri: "https://picsum.photos/200" }}
-                style={item.empty ? styles.itemInvisible : styles.matchItem}
-              />
-            </TouchableHighlight>
-          )}
-          numColumns={numColumns}
-          style={styles.matches}
-          ListHeaderComponent={() => (
-            <Text style={styles.numberMatches}>{users.length} Vorschläge</Text>
-          )}
-        />
+      {isLoading ? (
+        <ActivityIndicator style={styles.defaultContainer} />
       ) : (
-        <ScrollView
-          contentContainerStyle={{ alignItems: "center" }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          <View style={styles.noMatchesContainer}>
-            <Image
-              source={require("../assets/images/empty-state.png")}
-              style={styles.noMatchesImage}
+        <View style={styles.defaultContainer}>
+          {matches.length ? (
+            <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              ref={ref}
+              data={formatData(matches, numColumns)}
+              renderItem={({ item }: any) => (
+                <TouchableHighlight
+                  style={styles.touchable}
+                  underlayColor="transparent"
+                  onPress={() => navigation.push("Detail", item.profileId)}
+                >
+                  <MatchItem
+                    userName={item.name}
+                    imageSource={{ uri: item.profilePictureUrl }}
+                    style={item.empty ? styles.itemInvisible : styles.matchItem}
+                  />
+                </TouchableHighlight>
+              )}
+              numColumns={numColumns}
+              style={styles.matches}
+              ListHeaderComponent={() => (
+                <Text style={styles.numberMatches}>
+                  {numberOfMatches} Match(es)
+                </Text>
+              )}
             />
-            <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
-            <Text style={styles.noMatchesText}>
-              Leider konnten wir keine passenden Matches finden. Probiere es
-              später erneut oder lade die Seite neu!
-            </Text>
-          </View>
-        </ScrollView>
+          ) : (
+            <ScrollView
+              contentContainerStyle={{ alignItems: "center" }}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            >
+              <View style={styles.noMatchesContainer}>
+                <Image
+                  source={require("../assets/images/empty-state.png")}
+                  style={styles.noMatchesImage}
+                />
+                <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
+                <Text style={styles.noMatchesText}>
+                  Leider konnten wir keine passenden Matches finden. Komm später
+                  wieder oder lade die Seite neu!
+                </Text>
+              </View>
+            </ScrollView>
+          )}
+        </View>
       )}
     </View>
   );
@@ -116,6 +159,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     paddingBottom: 20,
+  },
+  defaultContainer: {
+    flex: 1,
+    backgroundColor: "white",
   },
   touchable: {
     flex: 1,
