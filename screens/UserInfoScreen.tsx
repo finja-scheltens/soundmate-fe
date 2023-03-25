@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -38,9 +39,14 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
   const [userName, onChangeUserName] = useState("");
   const [userAge, onChangeUserAge] = useState("");
 
+  const [isLoading, setLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
+
   const isLogin = route.params.isLogin;
 
   async function updateProfile() {
+    setUpdateLoading(true);
+
     const token = await SecureStore.getItemAsync("token");
 
     axios("http://192.168.178.26:8080/api/profile", {
@@ -59,7 +65,8 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
       })
       .catch(error => {
         console.log("error", error.message);
-      });
+      })
+      .finally(() => setTimeout(() => setUpdateLoading(false), 500));
   }
 
   async function submit() {
@@ -72,6 +79,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
 
   useEffect(() => {
     const getProfileData = async () => {
+      setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
       axios("http://192.168.178.26:8080/api/profile", {
@@ -87,7 +95,8 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
         })
         .catch(error => {
           console.log("error", error.message);
-        });
+        })
+        .finally(() => setLoading(false));
     };
     if (!isLogin) getProfileData();
   }, []);
@@ -104,43 +113,46 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
               </Pressable>
             )}
           </SafeAreaView>
-
-          <Text style={styles.infoHeadline}>Wie heißt du?</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeUserName}
-            value={userName}
-            placeholder="Dein Name"
-            placeholderTextColor={AppColors.GREY_500}
-          />
-
-          <Text style={styles.infoHeadline}>Wie alt bist du?</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeUserAge}
-            value={userAge}
-            placeholder="Dein Alter"
-            placeholderTextColor={AppColors.GREY_500}
-            autoCapitalize="none"
-            keyboardType="number-pad"
-          />
-
-          <Text style={styles.infoHeadline}>
-            Wie lautet dein Instagram-Benutzername?
-          </Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeInstaName}
-            value={instaName}
-            placeholder="Dein Instagram Username"
-            placeholderTextColor={AppColors.GREY_500}
-            autoCapitalize="none"
-          />
+          {isLoading && !isLogin && <ActivityIndicator />}
+          {!isLoading && (
+            <View>
+              <Text style={styles.infoHeadline}>Wie heißt du?</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeUserName}
+                value={userName}
+                placeholder="Dein Name"
+                placeholderTextColor={AppColors.GREY_500}
+              />
+              <Text style={styles.infoHeadline}>Wie alt bist du?</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeUserAge}
+                value={userAge}
+                placeholder="Dein Alter"
+                placeholderTextColor={AppColors.GREY_500}
+                autoCapitalize="none"
+                keyboardType="number-pad"
+              />
+              <Text style={styles.infoHeadline}>
+                Wie lautet dein Instagram-Benutzername?
+              </Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeInstaName}
+                value={instaName}
+                placeholder="Dein Instagram Username"
+                placeholderTextColor={AppColors.GREY_500}
+                autoCapitalize="none"
+              />
+            </View>
+          )}
         </KeyboardAwareScrollView>
         <PrimaryButton
           title="Speichern"
           style={styles.submitButton}
           onPress={submit}
+          isLoading={updateLoading}
         />
       </View>
     </DismissKeyboard>

@@ -4,6 +4,8 @@
  *
  */
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as SplashScreen from "expo-splash-screen";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -12,8 +14,7 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
-import { ColorSchemeName } from "react-native";
+import { ColorSchemeName, View } from "react-native";
 
 import { AppColors } from "../constants/AppColors";
 
@@ -41,21 +42,36 @@ export default function Navigation({
   colorScheme: ColorSchemeName;
 }) {
   const [isSignedIn, setSignedIn] = React.useState(false);
+  const [appIsReady, setAppIsReady] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkUser = async () => {
+      await SplashScreen.preventAutoHideAsync();
       const token = await SecureStore.getItemAsync("token");
       if (token) setSignedIn(true);
+      setAppIsReady(true);
     };
     checkUser();
   }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
 
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
-      {isSignedIn ? <SignedInNavigator /> : <RootNavigator />}
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        {isSignedIn ? <SignedInNavigator /> : <RootNavigator />}
+      </View>
     </NavigationContainer>
   );
 }

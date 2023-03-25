@@ -1,5 +1,11 @@
 import * as React from "react";
-import { StyleSheet, Image, View, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Text } from "../components/Themed";
 import { useScrollToTop } from "@react-navigation/native";
 import { useEffect, useState } from "react";
@@ -12,8 +18,6 @@ import SecondaryButton from "../components/SecondaryButton";
 import axios, { AxiosResponse } from "axios";
 import * as SecureStore from "expo-secure-store";
 
-const user = require("../data/user.json");
-
 export default function HomeScreen({ navigation }: any) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
@@ -21,9 +25,11 @@ export default function HomeScreen({ navigation }: any) {
   const [usersData, setUsersData] = useState<any>([]);
   const [topArtists, setTopArtists] = useState<any>([]);
   const [topGenres, setTopGenres] = useState<any>([]);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     const getProfileData = async () => {
+      setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
       axios("http://192.168.178.26:8080/api/profile", {
@@ -39,12 +45,15 @@ export default function HomeScreen({ navigation }: any) {
         })
         .catch(error => {
           console.log("error", error.message);
-        });
+        })
+        .finally(() => setLoading(false));
     };
     getProfileData();
   }, []);
 
-  return (
+  return isLoading ? (
+    <ActivityIndicator style={styles.loading} />
+  ) : (
     <ScrollView ref={ref} style={styles.scrollContainer}>
       <View style={styles.profileHeaderContainer}>
         <Image
@@ -101,6 +110,10 @@ export default function HomeScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   scrollContainer: {
     flex: 1,
     backgroundColor: "white",

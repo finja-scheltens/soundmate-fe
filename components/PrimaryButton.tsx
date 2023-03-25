@@ -1,15 +1,25 @@
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { AppColors } from "../constants/AppColors";
 interface Props {
   onPress: () => void;
   title?: string;
   style?: any;
+  isLoading?: boolean;
 }
 
-export default function PrimaryButton({ onPress, title, style }: Props) {
+export default function PrimaryButton({
+  onPress,
+  title,
+  style,
+  isLoading,
+}: Props) {
   return (
     <Pressable style={[styles.button, style]} onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
+      {isLoading ? (
+        <ActivityIndicator color="#ffffff" />
+      ) : (
+        <Text style={styles.text}>{title}</Text>
+      )}
     </Pressable>
   );
 }
