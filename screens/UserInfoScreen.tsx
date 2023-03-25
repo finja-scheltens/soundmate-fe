@@ -57,7 +57,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
       data: {
         name: userName,
         age: userAge,
-        contactInfo: instaName,
+        contactInfo: instaName.trim(),
       },
     })
       .then(() => {
