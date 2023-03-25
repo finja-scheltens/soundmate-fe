@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Text } from "../components/Themed";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useScrollToTop } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { AppColors } from "../constants/AppColors";
@@ -56,10 +57,17 @@ export default function HomeScreen({ navigation }: any) {
   ) : (
     <ScrollView ref={ref} style={styles.scrollContainer}>
       <View style={styles.profileHeaderContainer}>
-        <Image
-          source={{ uri: usersData.profilePictureUrl }}
-          style={styles.profileHeaderImage}
-        />
+        {usersData.profilePictureUrl ? (
+          <Image
+            source={{ uri: usersData.profilePictureUrl }}
+            style={styles.profileHeaderImage}
+          />
+        ) : (
+          <Image
+            source={require("../assets/images/avatar.png")}
+            style={styles.profileHeaderImage}
+          />
+        )}
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.userData}>
@@ -67,7 +75,14 @@ export default function HomeScreen({ navigation }: any) {
             <Text style={styles.userName}>
               {usersData.name}, {usersData.age}
             </Text>
-            <Text style={styles.eMail}>{usersData.contactInfo}</Text>
+            <View style={styles.instaInfo}>
+              <Ionicons
+                name="logo-instagram"
+                size={18}
+                color={AppColors.GREY_500}
+              />
+              <Text style={styles.eMail}>{usersData.contactInfo}</Text>
+            </View>
           </View>
           <View>
             <SecondaryButton
@@ -79,7 +94,7 @@ export default function HomeScreen({ navigation }: any) {
           </View>
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.genreHeadline}>Deine Genres</Text>
+          <Text style={styles.genreHeadline}>Deine Top Genres</Text>
           <View style={styles.genres}>
             {topGenres.map(
               (genre: any | undefined, index: Key | null | undefined) => (
@@ -152,11 +167,17 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: AppColors.GREY_900,
   },
+  instaInfo: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
   eMail: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
     color: AppColors.GREY_500,
-    marginTop: 8,
+    marginLeft: 6,
   },
   infoContainer: {
     backgroundColor: "white",
