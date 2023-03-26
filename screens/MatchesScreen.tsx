@@ -114,7 +114,8 @@ export default function MatchesScreen({ navigation }: Props) {
                   onPress={() => navigation.push("Detail", item.profileId)}
                 >
                   <MatchItem
-                    user={item}
+                    userName={item.name}
+                    userAge={item.age}
                     imageSource={
                       item.profilePictureUrl
                         ? { uri: item.profilePictureUrl }
