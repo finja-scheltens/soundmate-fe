@@ -9,27 +9,30 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 interface Props {
   imageSource: ImageSourcePropType;
-  userName?: string;
+  user: any;
   style?: any;
 }
 
-export default function PrimaryButton({ imageSource, userName, style }: Props) {
+export default function PrimaryButton({ imageSource, user, style }: Props) {
   return (
     <View style={[styles.itemContainer, style]}>
       <View style={styles.innerContainer}>
         <ImageBackground source={imageSource} style={styles.itemImage} />
         <LinearGradient
           colors={[
-            "rgba(0,0,0,0.01)",
-            "rgba(0,0,0,0.15)",
-            "rgba(0,0,0,0.3)",
-            "rgba(0,0,0,0.5)",
+            "rgba(0,0,0,0.0)",
+            "rgba(0,0,0,0.07)",
+            "rgba(0,0,0,0.2)",
+            "rgba(0,0,0,0.4)",
+            "rgba(0,0,0,0.6)",
             "rgba(0,0,0,0.7)",
-            "rgba(0,0,0,0.9)",
+            "rgba(0,0,0,0.8)",
           ]}
           style={styles.gradient}
         >
-          <Text style={styles.userName}>{userName}</Text>
+          <Text style={styles.userName}>
+            {user.name}, {user.age}
+          </Text>
         </LinearGradient>
       </View>
     </View>

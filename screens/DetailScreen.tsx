@@ -72,7 +72,11 @@ export default function HomeScreen({ route, navigation }: Props | any) {
         <View style={styles.profileHeaderContainer}>
           <SafeAreaView></SafeAreaView>
           <ImageBackground
-            source={{ uri: matchData.profilePictureUrl }}
+            source={
+              matchData.profilePictureUrl
+                ? { uri: matchData.profilePictureUrl }
+                : require("../assets/images/avatar.png")
+            }
             style={styles.profileHeaderImage}
             imageStyle={{
               borderRadius: 30,
@@ -92,7 +96,9 @@ export default function HomeScreen({ route, navigation }: Props | any) {
           </Pressable>
         </View>
         <View style={styles.contentContainer}>
-          <Text style={styles.userName}>{matchData.name}</Text>
+          <Text style={styles.userName}>
+            {matchData.name}, {matchData.age}
+          </Text>
           <View style={styles.instaInfo}>
             <Ionicons
               name="logo-instagram"

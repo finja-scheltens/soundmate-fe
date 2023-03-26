@@ -57,17 +57,14 @@ export default function HomeScreen({ navigation }: any) {
   ) : (
     <ScrollView ref={ref} style={styles.scrollContainer}>
       <View style={styles.profileHeaderContainer}>
-        {usersData.profilePictureUrl ? (
-          <Image
-            source={{ uri: usersData.profilePictureUrl }}
-            style={styles.profileHeaderImage}
-          />
-        ) : (
-          <Image
-            source={require("../assets/images/avatar.png")}
-            style={styles.profileHeaderImage}
-          />
-        )}
+        <Image
+          source={
+            usersData.profilePictureUrl
+              ? { uri: usersData.profilePictureUrl }
+              : require("../assets/images/avatar.png")
+          }
+          style={styles.profileHeaderImage}
+        />
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.userData}>
