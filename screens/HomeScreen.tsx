@@ -33,7 +33,7 @@ export default function HomeScreen({ navigation }: any) {
       setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
-      axios("http://192.168.178.26:8080/api/profile", {
+      axios("http://82.165.77.87:8080/api/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
