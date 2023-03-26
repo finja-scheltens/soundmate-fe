@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 35,
     fontFamily: "Inter-ExtraBold",
+    color: "white",
   },
   text: {
     fontSize: 16,
@@ -158,5 +159,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingHorizontal: "6%",
     fontFamily: "Inter-Regular",
+    color: "white",
   },
 });

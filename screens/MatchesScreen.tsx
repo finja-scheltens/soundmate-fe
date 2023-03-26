@@ -114,8 +114,12 @@ export default function MatchesScreen({ navigation }: Props) {
                   onPress={() => navigation.push("Detail", item.profileId)}
                 >
                   <MatchItem
-                    userName={item.name}
-                    imageSource={{ uri: item.profilePictureUrl }}
+                    user={item}
+                    imageSource={
+                      item.profilePictureUrl
+                        ? { uri: item.profilePictureUrl }
+                        : require("../assets/images/avatar2.png")
+                    }
                     style={item.empty ? styles.itemInvisible : styles.matchItem}
                   />
                 </TouchableHighlight>
