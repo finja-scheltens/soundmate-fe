@@ -60,7 +60,7 @@ export default function MatchesScreen({ navigation }: Props) {
   async function getMatches() {
     const token = await SecureStore.getItemAsync("token");
 
-    axios("http://192.168.178.26:8080/api/match", {
+    axios("http://82.165.77.87:8080/api/match", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

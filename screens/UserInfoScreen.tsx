@@ -49,7 +49,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
 
     const token = await SecureStore.getItemAsync("token");
 
-    axios("http://192.168.178.26:8080/api/profile", {
+    axios("http://82.165.77.87:8080/api/profile", {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
       setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
-      axios("http://192.168.178.26:8080/api/profile", {
+      axios("http://82.165.77.87:8080/api/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

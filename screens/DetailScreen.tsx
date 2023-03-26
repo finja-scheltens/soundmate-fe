@@ -45,7 +45,7 @@ export default function HomeScreen({ route, navigation }: Props | any) {
       setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
-      axios(`http://192.168.178.26:8080/api/profile/${profileId}`, {
+      axios(`http://82.165.77.87:8080/api/profile/${profileId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
