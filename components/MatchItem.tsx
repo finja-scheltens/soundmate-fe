@@ -7,13 +7,20 @@ import {
   ImageSourcePropType,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+
 interface Props {
   imageSource: ImageSourcePropType;
-  user: any;
+  userName: string;
+  userAge: number;
   style?: any;
 }
 
-export default function PrimaryButton({ imageSource, user, style }: Props) {
+export default function PrimaryButton({
+  imageSource,
+  userName,
+  userAge,
+  style,
+}: Props) {
   return (
     <View style={[styles.itemContainer, style]}>
       <View style={styles.innerContainer}>
@@ -31,7 +38,7 @@ export default function PrimaryButton({ imageSource, user, style }: Props) {
           style={styles.gradient}
         >
           <Text style={styles.userName}>
-            {user.name}, {user.age}
+            {userName}, {userAge}
           </Text>
         </LinearGradient>
       </View>
