@@ -101,9 +101,7 @@ export default function LoginScreen({ navigation }: any) {
         />
         <View style={styles.textContainer}>
           <Text style={styles.title}>Soundmate</Text>
-          <Text style={styles.text}>
-            Lorem ipsum dolar sit amet lorem ipsum dolar sit amet. Lorem ipsum
-            dolar sit.
+          <Text style={styles.text}>Entdecke deine musikalischen Seelenverwandten auf SoundMate. Verbinde dich mit neuen Freunden basierend auf deiner Spotify Library.
           </Text>
         </View>
         <PrimaryButton

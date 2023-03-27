@@ -4,9 +4,9 @@
     "slug": "soundmate",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "owner": "loeffelr",
+    "icon": "./assets/images/logo-square.png",
+    "scheme": "soundmate",
+    "owner": "proehr",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -16,23 +16,27 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.loeffelr.spotifriends",
-      "config": {
-        "usesNonExemptEncryption": false
-      }
+      "bundleIdentifier": "com.proehr.soundmate"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo-square.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.loeffelr.spotifriends"
+      "package": "com.proehr.soundmate"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "321287ac-87aa-4c86-a19f-c099a1661b3b"
+      }
     }
   }
 }
