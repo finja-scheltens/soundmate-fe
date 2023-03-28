@@ -41,37 +41,12 @@ export default function Navigation({
 }: {
   colorScheme: ColorSchemeName;
 }) {
-  const [isSignedIn, setSignedIn] = React.useState(false);
-  const [appIsReady, setAppIsReady] = useState(false);
-
-  useEffect(() => {
-    const checkUser = async () => {
-      await SplashScreen.preventAutoHideAsync();
-      const token = await SecureStore.getItemAsync("token");
-      if (token) setSignedIn(true);
-      setAppIsReady(true);
-    };
-    checkUser();
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
-
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        {isSignedIn ? <SignedInNavigator /> : <RootNavigator />}
-      </View>
+      <RootNavigator />
     </NavigationContainer>
   );
 }
@@ -93,7 +68,10 @@ function RootNavigator() {
       <Stack.Screen
         name="Root"
         component={BottomTabNavigator}
-        options={{ headerShown: false, animationTypeForReplace: "pop" }}
+        options={{
+          headerShown: false,
+          animation: "fade",
+        }}
       />
       <Stack.Screen
         name="UserInfo"

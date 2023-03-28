@@ -1,6 +1,6 @@
 import { ImageBackground, Image, StyleSheet } from "react-native";
 import { Text, View } from "../components/Themed";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   makeRedirectUri,
   ResponseType,
@@ -12,6 +12,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 
 import * as SecureStore from "expo-secure-store";
+import * as SplashScreen from "expo-splash-screen";
 
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
@@ -34,8 +35,24 @@ export default function LoginScreen({ navigation }: any) {
   const dispatch = useDispatch();
   const [spotifyAuthCode, setSpotifyAuthCode] = useState("");
   const [backendJwtToken, setBackendJwtToken] = useState("");
+  const [appIsReady, setAppIsReady] = useState(false);
 
   const soundmateRedirectUri = makeRedirectUri();
+  useEffect(() => {
+    const checkUser = async () => {
+      await SplashScreen.preventAutoHideAsync();
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        navigation.push("Root");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Root" }],
+        });
+      }
+      setAppIsReady(true);
+    };
+    checkUser();
+  }, []);
 
   const [request, response, promptAsync] = useAuthRequest(
     {
@@ -87,8 +104,18 @@ export default function LoginScreen({ navigation }: any) {
     }
   }, [spotifyAuthCode]);
 
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       <ImageBackground
         source={require("../assets/images/login-background.png")}
         resizeMode="stretch"
@@ -101,7 +128,10 @@ export default function LoginScreen({ navigation }: any) {
         />
         <View style={styles.textContainer}>
           <Text style={styles.title}>Soundmate</Text>
-          <Text style={styles.text}>Entdecke deine musikalischen Seelenverwandten auf SoundMate. Verbinde dich mit neuen Freunden basierend auf deiner Spotify Library.
+          <Text style={styles.text}>
+            Entdecke deine musikalischen Seelenverwandten auf SoundMate.
+            Verbinde dich mit neuen Freunden basierend auf deiner Spotify
+            Bibliothek.
           </Text>
         </View>
         <PrimaryButton

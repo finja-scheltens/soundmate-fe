@@ -5,6 +5,7 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
+  TouchableHighlight,
 } from "react-native";
 import { Text } from "../components/Themed";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -51,6 +52,14 @@ export default function HomeScreen({ navigation }: any) {
     };
     getProfileData();
   }, []);
+
+  async function logout() {
+    await SecureStore.deleteItemAsync("token");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
+  }
 
   return isLoading ? (
     <ActivityIndicator style={styles.loading} />
@@ -117,6 +126,9 @@ export default function HomeScreen({ navigation }: any) {
           </View>
         </View>
       </View>
+      <TouchableHighlight onPress={logout} underlayColor="white">
+        <Text style={styles.logout}>Abmelden</Text>
+      </TouchableHighlight>
     </ScrollView>
   );
 }
@@ -199,5 +211,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
     backgroundColor: "white",
     paddingBottom: 20,
+  },
+  logout: {
+    marginTop: 8,
+    marginBottom: 26,
+    color: AppColors.PRIMARY,
+    textAlign: "center",
+    fontFamily: "Inter-Medium",
+    fontSize: 16,
   },
 });
