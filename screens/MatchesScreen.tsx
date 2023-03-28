@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   noMatchesImage: {
-    height: "35%",
+    height: 180,
     resizeMode: "contain",
     shadowColor: "black",
     shadowOffset: {
