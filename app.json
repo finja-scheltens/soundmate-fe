@@ -28,7 +28,8 @@
         "foregroundImage": "./assets/images/logo-square.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.proehr.soundmate"
+      "package": "com.proehr.soundmate",
+      "softwareKeyboardLayoutMode":"pan"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
