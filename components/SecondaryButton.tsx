@@ -21,9 +21,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 26,
     borderRadius: 8,
-    elevation: 3,
+    // elevation: 3,
     borderColor: AppColors.GREY_500,
     borderWidth: 1,
+    backgroundColor: "white",
   },
   text: {
     fontSize: 16,
