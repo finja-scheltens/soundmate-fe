@@ -135,22 +135,20 @@ export default function MatchesScreen({ navigation }: Props) {
             />
           ) : (
             <ScrollView
-              contentContainerStyle={{ alignItems: "center" }}
+              contentContainerStyle={styles.noMatchesContainer}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
             >
-              <View style={styles.noMatchesContainer}>
-                <Image
-                  source={require("../assets/images/empty-state.png")}
-                  style={styles.noMatchesImage}
-                />
-                <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
-                <Text style={styles.noMatchesText}>
-                  Leider konnten wir keine passenden Matches finden. Komm später
-                  wieder oder lade die Seite neu!
-                </Text>
-              </View>
+              <Image
+                source={require("../assets/images/empty-state.png")}
+                style={styles.noMatchesImage}
+              />
+              <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
+              <Text style={styles.noMatchesText}>
+                Leider konnten wir keine passenden Matches finden. Komm später
+                wieder oder lade die Seite neu!
+              </Text>
             </ScrollView>
           )}
         </View>
@@ -198,10 +196,12 @@ const styles = StyleSheet.create({
   },
   noMatchesContainer: {
     paddingTop: 100,
+    flex: 1,
+    display: "flex",
     alignItems: "center",
   },
   noMatchesImage: {
-    height: "85%",
+    height: "35%",
     resizeMode: "contain",
     shadowColor: "black",
     shadowOffset: {
