@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Bold",
     fontSize: 26,
     color: AppColors.GREY_900,
+    marginBottom: 12,
   },
   infoHeadline: {
     marginTop: 26,
