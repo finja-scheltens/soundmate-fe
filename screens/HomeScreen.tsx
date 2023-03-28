@@ -77,19 +77,9 @@ export default function HomeScreen({ navigation }: any) {
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.userData}>
-          <View>
-            <Text style={styles.userName}>
-              {usersData.name}, {usersData.age}
-            </Text>
-            <View style={styles.instaInfo}>
-              <Ionicons
-                name="logo-instagram"
-                size={18}
-                color={AppColors.GREY_500}
-              />
-              <Text style={styles.eMail}>{usersData.contactInfo}</Text>
-            </View>
-          </View>
+          <Text style={styles.userName}>
+            {usersData.name}, {usersData.age}
+          </Text>
           <View>
             <SecondaryButton
               title="Ändern"
@@ -98,6 +88,22 @@ export default function HomeScreen({ navigation }: any) {
               }
             />
           </View>
+        </View>
+        <View style={styles.subInfo}>
+          <Ionicons
+            name="logo-instagram"
+            size={18}
+            color={AppColors.GREY_500}
+          />
+          <Text style={styles.subText}>{usersData.contactInfo}</Text>
+        </View>
+        <View style={styles.subInfoBio}>
+          <Ionicons
+            name="chatbubble-outline"
+            size={18}
+            color={AppColors.GREY_500}
+          />
+          <Text style={styles.subTextBio}>{usersData.bio}</Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Genres</Text>
@@ -170,23 +176,38 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 25,
+    marginBottom: 6,
   },
   userName: {
     fontFamily: "Inter-Bold",
     fontSize: 26,
     color: AppColors.GREY_900,
   },
-  instaInfo: {
+  subInfo: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 6,
+    marginRight: 20,
   },
-  eMail: {
+  subInfoBio: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 6,
+    marginRight: 20,
+  },
+  subText: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
     color: AppColors.GREY_500,
     marginLeft: 6,
+  },
+  subTextBio: {
+    fontFamily: "Inter-Regular",
+    fontSize: 14,
+    color: AppColors.GREY_500,
+    marginLeft: 6,
+    lineHeight: 18,
   },
   infoContainer: {
     backgroundColor: "white",

@@ -38,6 +38,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
   const [instaName, onChangeInstaName] = useState("");
   const [userName, onChangeUserName] = useState("");
   const [userAge, onChangeUserAge] = useState("");
+  const [userBio, onChangeUserBio] = useState("");
 
   const [isLoading, setLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
@@ -58,6 +59,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
         name: userName,
         age: userAge,
         contactInfo: instaName.trim(),
+        bio: userBio,
       },
     })
       .then(() => {
@@ -70,7 +72,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
   }
 
   async function submit() {
-    if (userName == "" || userAge == "" || instaName == "") {
+    if (userName == "" || userAge == "" || instaName == "" || userBio == "") {
       Alert.alert("Fülle bitte alle Felder aus.");
     } else {
       updateProfile();
@@ -92,6 +94,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
           onChangeUserName(response.data.name);
           onChangeUserAge(response.data.age.toString());
           onChangeInstaName(response.data.contactInfo);
+          onChangeUserBio(response.data.bio);
         })
         .catch(error => {
           console.log("error", error.message);
@@ -147,6 +150,18 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
                 placeholderTextColor={AppColors.GREY_500}
                 autoCapitalize="none"
               />
+              <Text style={styles.infoHeadline}>
+                Was möchtest du über dich erzählen?
+              </Text>
+              <TextInput
+                editable
+                multiline
+                numberOfLines={4}
+                onChangeText={onChangeUserBio}
+                value={userBio}
+                style={styles.inputMulti}
+                placeholder="Steckbrief"
+              />
             </View>
           )}
         </KeyboardAwareScrollView>
@@ -164,6 +179,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   loading: {
     marginTop: 30,
@@ -183,10 +199,10 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Bold",
     fontSize: 26,
     color: AppColors.GREY_900,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   infoHeadline: {
-    marginTop: 26,
+    marginTop: 22,
     marginLeft: 20,
     fontFamily: "Inter-Bold",
     fontSize: 18,
@@ -200,6 +216,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     paddingLeft: 10,
+  },
+  inputMulti: {
+    margin: 20,
+    borderColor: AppColors.GREY_300,
+    color: AppColors.GREY_900,
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingLeft: 10,
+    minHeight: 100,
+    maxHeight: 100,
+    paddingTop: 10,
   },
   submitButton: {
     position: "absolute",

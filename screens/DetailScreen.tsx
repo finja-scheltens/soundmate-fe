@@ -107,28 +107,36 @@ export default function HomeScreen({ route, navigation }: Props | any) {
             />
             <Text style={styles.eMail}>{matchData.contactInfo}</Text>
           </View>
+          <View style={styles.subInfoBio}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={18}
+              color={AppColors.GREY_500}
+            />
+            <Text style={styles.subTextBio}>{matchData.bio}</Text>
+          </View>
           <View style={styles.infoContainer}>
             <Text style={styles.genreHeadline}>Top Genres</Text>
             <View style={styles.genres}>
-              {topGenres.map(
-                (genre: any, index: any) => (
-                  <Badge key={index} text={genre.name} style={styles.genreBadge} />
-                )
-              )}
+              {topGenres.map((genre: any, index: any) => (
+                <Badge
+                  key={index}
+                  text={genre.name}
+                  style={styles.genreBadge}
+                />
+              ))}
             </View>
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.genreHeadline}>Top Künstler</Text>
             <View style={styles.artists}>
-              {topArtists.map(
-                (artist: any, index: any) => (
-                  <ListItem
-                    key={index}
-                    text={artist.name}
-                    imageSource={{ uri: artist.imageUrl }}
-                  />
-                )
-              )}
+              {topArtists.map((artist: any, index: any) => (
+                <ListItem
+                  key={index}
+                  text={artist.name}
+                  imageSource={{ uri: artist.imageUrl }}
+                />
+              ))}
             </View>
           </View>
         </View>
@@ -197,6 +205,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: AppColors.GREY_900,
     marginTop: 25,
+    marginBottom: 6,
   },
   instaInfo: {
     display: "flex",
@@ -204,11 +213,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
+  subInfoBio: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 6,
+    marginRight: 20,
+  },
   eMail: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
     color: AppColors.GREY_500,
     marginLeft: 6,
+  },
+  subTextBio: {
+    fontFamily: "Inter-Regular",
+    fontSize: 14,
+    color: AppColors.GREY_500,
+    marginLeft: 6,
+    lineHeight: 18,
   },
   infoContainer: {
     backgroundColor: "white",
