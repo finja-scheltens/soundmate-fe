@@ -140,7 +140,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
                 keyboardType="number-pad"
               />
               <Text style={styles.infoHeadline}>
-                Wie lautet dein Instagram-Benutzername?
+                Wie heißt du auf Instagram?
               </Text>
               <TextInput
                 style={styles.input}
