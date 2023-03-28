@@ -111,6 +111,7 @@ export default function MatchesScreen({ navigation }: Props) {
                 <TouchableHighlight
                   style={styles.touchable}
                   underlayColor="transparent"
+                  disabled={item.empty}
                   onPress={() => navigation.push("Detail", item.profileId)}
                 >
                   <MatchItem
