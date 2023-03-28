@@ -56,7 +56,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
         Authorization: `Bearer ${token}`,
       },
       data: {
-        name: userName,
+        name: userName.trim(),
         age: userAge,
         contactInfo: instaName.trim(),
         bio: userBio,
@@ -72,7 +72,12 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
   }
 
   async function submit() {
-    if (userName == "" || userAge == "" || instaName == "" || userBio == "") {
+    if (
+      userName.trim() == "" ||
+      userAge.trim() == "" ||
+      instaName.trim() == "" ||
+      userBio.trim() == ""
+    ) {
       Alert.alert("Fülle bitte alle Felder aus.");
     } else {
       updateProfile();
