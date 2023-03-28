@@ -111,6 +111,7 @@ export default function MatchesScreen({ navigation }: Props) {
                 <TouchableHighlight
                   style={styles.touchable}
                   underlayColor="transparent"
+                  disabled={item.empty}
                   onPress={() => navigation.push("Detail", item.profileId)}
                 >
                   <MatchItem
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   noMatchesImage: {
-    height: "35%",
+    height: 180,
     resizeMode: "contain",
     shadowColor: "black",
     shadowOffset: {
