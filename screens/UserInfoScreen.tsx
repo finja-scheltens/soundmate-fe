@@ -113,7 +113,9 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
               </Pressable>
             )}
           </SafeAreaView>
-          {isLoading && !isLogin && <ActivityIndicator />}
+          {isLoading && !isLogin && (
+            <ActivityIndicator style={styles.loading} />
+          )}
           {!isLoading && (
             <View>
               <Text style={styles.infoHeadline}>Wie heißt du?</Text>
@@ -163,6 +165,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loading: {
+    marginTop: 30,
+  },
   scrollContainer: {
     flex: 1,
     backgroundColor: "white",
@@ -180,6 +185,7 @@ const styles = StyleSheet.create({
     color: AppColors.GREY_900,
   },
   infoHeadline: {
+    marginTop: 26,
     marginLeft: 20,
     fontFamily: "Inter-Bold",
     fontSize: 18,
@@ -188,7 +194,6 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     margin: 20,
-    marginBottom: 46,
     borderColor: AppColors.GREY_300,
     color: AppColors.GREY_900,
     borderWidth: 1,
