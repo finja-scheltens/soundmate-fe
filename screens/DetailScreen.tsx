@@ -111,8 +111,8 @@ export default function HomeScreen({ route, navigation }: Props | any) {
             <Text style={styles.genreHeadline}>Top Genres</Text>
             <View style={styles.genres}>
               {topGenres.map(
-                (genre: string | undefined, index: Key | null | undefined) => (
-                  <Badge key={index} text={genre} style={styles.genreBadge} />
+                (genre: any, index: any) => (
+                  <Badge key={index} text={genre.name} style={styles.genreBadge} />
                 )
               )}
             </View>
@@ -121,11 +121,11 @@ export default function HomeScreen({ route, navigation }: Props | any) {
             <Text style={styles.genreHeadline}>Top Künstler</Text>
             <View style={styles.artists}>
               {topArtists.map(
-                (artist: string | undefined, index: Key | null | undefined) => (
+                (artist: any, index: any) => (
                   <ListItem
                     key={index}
-                    text={artist}
-                    imageSource={require("../assets/images/artist.jpg")}
+                    text={artist.name}
+                    imageSource={{ uri: artist.imageUrl }}
                   />
                 )
               )}
