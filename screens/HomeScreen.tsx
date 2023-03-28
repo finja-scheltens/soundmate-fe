@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: AppColors.GREY_500,
     marginLeft: 6,
-    lineHeight: 18,
+    lineHeight: 19,
   },
   infoContainer: {
     backgroundColor: "white",

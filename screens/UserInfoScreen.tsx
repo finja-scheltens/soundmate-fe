@@ -161,6 +161,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
                 value={userBio}
                 style={styles.inputMulti}
                 placeholder="Steckbrief"
+                textAlignVertical="top"
               />
             </View>
           )}

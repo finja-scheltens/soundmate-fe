@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
     color: AppColors.GREY_900,
     marginTop: 25,
     marginLeft: 20,
+    marginBottom: 6,
   },
   itemInvisible: {
     opacity: 0,
