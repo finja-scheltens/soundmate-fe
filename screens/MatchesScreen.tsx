@@ -24,7 +24,7 @@ import { useScrollToTop } from "@react-navigation/native";
 
 const users = require("../data/users.json");
 const numColumns = 2;
-type Props = NativeStackScreenProps<RootStackParamList, "Detail">;
+type Props = NativeStackScreenProps<RootStackParamList, "Matches">;
 
 const formatData = (
   data: { key: string; empty: boolean }[],

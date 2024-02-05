@@ -20,6 +20,7 @@ export type RootStackParamList = {
   Login: undefined;
   Detail: undefined;
   UserInfo: undefined;
+  Matches: undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 
