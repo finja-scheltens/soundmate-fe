@@ -30,7 +30,7 @@ const user = require("../data/user.json");
 
 type Props = NativeStackScreenProps<RootStackParamList, "Detail">;
 
-export default function HomeScreen({ route, navigation }: Props | any) {
+export default function DetailScreen({ route, navigation }: Props | any) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
   const [matchData, setMatchData] = useState<any>([]);

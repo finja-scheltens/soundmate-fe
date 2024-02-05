@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 
-export default function HomeScreen() {
+export default function AppInfoScreen() {
   return (
     <View style={styles.container}>
       <SafeAreaView />

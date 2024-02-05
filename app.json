@@ -29,7 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.proehr.soundmate",
-      "softwareKeyboardLayoutMode":"pan"
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -38,6 +38,10 @@
       "eas": {
         "projectId": "321287ac-87aa-4c86-a19f-c099a1661b3b"
       }
-    }
+    },
+    "plugins": [
+      "expo-font",
+      "expo-secure-store"
+    ]
   }
 }
