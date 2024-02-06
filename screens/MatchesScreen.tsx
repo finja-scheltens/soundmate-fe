@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types";
 import { useEffect, useState } from "react";
+import  config  from "../constants/Config";
 import axios, { AxiosResponse } from "axios";
 import * as SecureStore from "expo-secure-store";
 
@@ -60,7 +61,7 @@ export default function MatchesScreen({ navigation }: Props) {
   async function getMatches() {
     const token = await SecureStore.getItemAsync("token");
 
-    axios("http://82.165.77.87:8080/api/match", {
+    axios(`${config.API_URL}/api/match`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
