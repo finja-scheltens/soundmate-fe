@@ -17,6 +17,7 @@ import { Key } from "react";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
 import SecondaryButton from "../components/SecondaryButton";
+import  config  from "../constants/Config";
 import axios, { AxiosResponse } from "axios";
 import * as SecureStore from "expo-secure-store";
 
@@ -34,7 +35,7 @@ export default function HomeScreen({ navigation }: any) {
       setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
-      axios("http://82.165.77.87:8080/api/profile", {
+      axios(`${config.API_URL}/api/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

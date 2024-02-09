@@ -25,6 +25,7 @@ import { AppColors } from "../constants/AppColors";
 
 import { useScrollToTop } from "@react-navigation/native";
 import { Key } from "react";
+import config from "../constants/Config";
 
 const user = require("../data/user.json");
 
@@ -45,7 +46,7 @@ export default function DetailScreen({ route, navigation }: Props | any) {
       setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
-      axios(`http://82.165.77.87:8080/api/profile/${profileId}`, {
+      axios(`${config.API_URL}/api/profile/${profileId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

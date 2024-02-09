@@ -8,6 +8,7 @@ import {
 } from "expo-auth-session";
 import axios, { AxiosResponse } from "axios";
 import { useDispatch } from "react-redux";
+import  config  from "../constants/Config";
 import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 
@@ -57,7 +58,7 @@ export default function LoginScreen({ navigation }: any) {
   const [request, response, promptAsync] = useAuthRequest(
     {
       responseType: ResponseType.Code,
-      clientId: "83bf8873115447d893923470b70d209a",
+      clientId: "732952d94d384cb2a34885c376f835f3",
       scopes: [
         "user-read-currently-playing",
         "user-read-recently-played",
@@ -84,7 +85,7 @@ export default function LoginScreen({ navigation }: any) {
 
   useEffect(() => {
     if (spotifyAuthCode) {
-      axios("http://82.165.77.87:8080/api/auth/spotify", {
+      axios(`${config.API_URL}/api/auth/spotify`, {
         method: "POST",
         data: {
           authCode: spotifyAuthCode,

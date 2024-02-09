@@ -21,6 +21,7 @@ import PrimaryButton from "../components/PrimaryButton";
 import { AppColors } from "../constants/AppColors";
 import { RootStackParamList } from "../types";
 
+import  config  from "../constants/Config";
 import axios, { AxiosResponse } from "axios";
 import * as SecureStore from "expo-secure-store";
 
@@ -50,7 +51,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
 
     const token = await SecureStore.getItemAsync("token");
 
-    axios("http://82.165.77.87:8080/api/profile", {
+    axios(`${config.API_URL}/api/profile`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -89,7 +90,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
       setLoading(true);
       const token = await SecureStore.getItemAsync("token");
 
-      axios("http://82.165.77.87:8080/api/profile", {
+      axios(`${config.API_URL}/api/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
