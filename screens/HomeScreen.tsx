@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Image,
@@ -7,27 +8,30 @@ import {
   ActivityIndicator,
   TouchableHighlight,
 } from "react-native";
-import { Text } from "../components/Themed";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useScrollToTop } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+
+import { RootStackParamList, UserData, ArtistData, GenreData } from "../types";
 import { AppColors } from "../constants/AppColors";
-import { RootTabScreenProps } from "../types";
-import { Key } from "react";
+import config from "../constants/Config";
+
+import { Text } from "../components/Themed";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
 import SecondaryButton from "../components/SecondaryButton";
-import  config  from "../constants/Config";
-import axios, { AxiosResponse } from "axios";
-import * as SecureStore from "expo-secure-store";
 
-export default function HomeScreen({ navigation }: any) {
+type HomeProps = NativeStackScreenProps<RootStackParamList, "Home">;
+
+export default function HomeScreen({ navigation }: HomeProps) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
 
-  const [usersData, setUsersData] = useState<any>([]);
-  const [topArtists, setTopArtists] = useState<any>([]);
-  const [topGenres, setTopGenres] = useState<any>([]);
+  const [usersData, setUsersData] = useState<UserData>({} as UserData);
+  const [topArtists, setTopArtists] = useState<ArtistData[]>([]);
+  const [topGenres, setTopGenres] = useState<GenreData[]>([]);
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -84,9 +88,7 @@ export default function HomeScreen({ navigation }: any) {
           <View>
             <SecondaryButton
               title="Ändern"
-              onPress={() =>
-                navigation.navigate("UserInfo", { isLogin: false })
-              }
+              onPress={() => navigation.replace("UserInfo", { isLogin: false })}
             />
           </View>
         </View>
@@ -109,21 +111,15 @@ export default function HomeScreen({ navigation }: any) {
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Genres</Text>
           <View style={styles.genres}>
-            {topGenres.map(
-              (genre: any | undefined, index: Key | null | undefined) => (
-                <Badge
-                  key={index}
-                  text={genre.name}
-                  style={styles.genreBadge}
-                />
-              )
-            )}
+            {topGenres.map((genre: GenreData, index: number) => (
+              <Badge key={index} text={genre.name} style={styles.genreBadge} />
+            ))}
           </View>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Künstler</Text>
           <View style={styles.artists}>
-            {topArtists.map((artist: any, index: Key | null | undefined) => (
+            {topArtists.map((artist: ArtistData, index: number) => (
               <ListItem
                 key={index}
                 text={artist.name}

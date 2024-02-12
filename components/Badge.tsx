@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
 import { AppColors } from "../constants/AppColors";
 interface Props {
   text?: string;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export default function PrimaryButton({ text, style }: Props) {
