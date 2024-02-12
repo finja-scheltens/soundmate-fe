@@ -16,9 +16,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.proehr.soundmate"
@@ -39,9 +37,6 @@
         "projectId": "321287ac-87aa-4c86-a19f-c099a1661b3b"
       }
     },
-    "plugins": [
-      "expo-font",
-      "expo-secure-store"
-    ]
+    "plugins": ["expo-font", "expo-secure-store"]
   }
 }

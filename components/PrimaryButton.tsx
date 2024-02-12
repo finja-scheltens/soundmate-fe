@@ -1,9 +1,15 @@
-import { Pressable, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  Pressable,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ViewStyle,
+} from "react-native";
 import { AppColors } from "../constants/AppColors";
 interface Props {
   onPress: () => void;
   title?: string;
-  style?: any;
+  style?: ViewStyle;
   isLoading?: boolean;
 }
 

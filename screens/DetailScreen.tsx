@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -9,37 +10,39 @@ import {
   Linking,
   ActivityIndicator,
 } from "react-native";
-import { Text } from "../components/Themed";
-import Ionicons from "@expo/vector-icons/Ionicons";
-
+import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types";
-import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SecureStore from "expo-secure-store";
+import axios from "axios";
 
+import { RootStackParamList, UserData, ArtistData, GenreData } from "../types";
+import { AppColors } from "../constants/AppColors";
+import config from "../constants/Config";
+
+import { Text } from "../components/Themed";
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
 import Badge from "../components/Badge";
-import { AppColors } from "../constants/AppColors";
-
-import { useScrollToTop } from "@react-navigation/native";
-import { Key } from "react";
-import config from "../constants/Config";
 
 const user = require("../data/user.json");
 
-type Props = NativeStackScreenProps<RootStackParamList, "Detail">;
-
-export default function DetailScreen({ route, navigation }: Props | any) {
+type DetailProps = {
+  navigation: NativeStackScreenProps<
+    RootStackParamList,
+    "Detail"
+  >["navigation"];
+  route: NativeStackScreenProps<RootStackParamList, "Detail">["route"];
+};
+export default function DetailScreen({ route, navigation }: DetailProps) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
-  const [matchData, setMatchData] = useState<any>([]);
-  const [topArtists, setTopArtists] = useState<any>([]);
-  const [topGenres, setTopGenres] = useState<any>([]);
+  const [matchData, setMatchData] = useState<UserData>({} as UserData);
+  const [topArtists, setTopArtists] = useState<ArtistData[]>([]);
+  const [topGenres, setTopGenres] = useState<GenreData[]>([]);
   const [isLoading, setLoading] = useState(false);
 
-  const profileId = route.params;
+  const { profileId } = route.params;
 
   useEffect(() => {
     const getMatchData = async () => {
@@ -119,7 +122,7 @@ export default function DetailScreen({ route, navigation }: Props | any) {
           <View style={styles.infoContainer}>
             <Text style={styles.genreHeadline}>Top Genres</Text>
             <View style={styles.genres}>
-              {topGenres.map((genre: any, index: any) => (
+              {topGenres.map((genre: GenreData, index: number) => (
                 <Badge
                   key={index}
                   text={genre.name}
@@ -131,7 +134,7 @@ export default function DetailScreen({ route, navigation }: Props | any) {
           <View style={styles.infoContainer}>
             <Text style={styles.genreHeadline}>Top Künstler</Text>
             <View style={styles.artists}>
-              {topArtists.map((artist: any, index: any) => (
+              {topArtists.map((artist: ArtistData, index: number) => (
                 <ListItem
                   key={index}
                   text={artist.name}

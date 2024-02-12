@@ -1,19 +1,22 @@
-import { ImageBackground, Image, StyleSheet } from "react-native";
-import { Text, View } from "../components/Themed";
 import { useEffect, useState, useCallback } from "react";
+import { ImageBackground, Image, StyleSheet } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useDispatch } from "react-redux";
+import * as SecureStore from "expo-secure-store";
 import {
   makeRedirectUri,
   ResponseType,
   useAuthRequest,
 } from "expo-auth-session";
-import axios, { AxiosResponse } from "axios";
-import { useDispatch } from "react-redux";
-import  config  from "../constants/Config";
-import PrimaryButton from "../components/PrimaryButton";
-import { AppColors } from "../constants/AppColors";
-
-import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
+import axios, { AxiosResponse } from "axios";
+
+import { RootStackParamList, UserInfoParams } from "../types";
+import { AppColors } from "../constants/AppColors";
+import config from "../constants/Config";
+
+import { Text, View } from "../components/Themed";
+import PrimaryButton from "../components/PrimaryButton";
 
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
@@ -32,7 +35,9 @@ async function saveToken(value: string) {
   await SecureStore.setItemAsync("token", value);
 }
 
-export default function LoginScreen({ navigation }: any) {
+type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
+
+export default function LoginScreen({ navigation }: LoginProps) {
   const dispatch = useDispatch();
   const [spotifyAuthCode, setSpotifyAuthCode] = useState("");
   const [backendJwtToken, setBackendJwtToken] = useState("");

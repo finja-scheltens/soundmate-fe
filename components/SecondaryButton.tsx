@@ -1,9 +1,9 @@
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, Text, StyleSheet, ViewStyle } from "react-native";
 import { AppColors } from "../constants/AppColors";
 interface Props {
   onPress: () => void;
   title?: string;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export default function PrimaryButton({ onPress, title, style }: Props) {

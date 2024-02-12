@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   RefreshControl,
   StyleSheet,
@@ -10,27 +11,32 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types";
-import { useEffect, useState } from "react";
-import  config  from "../constants/Config";
-import axios, { AxiosResponse } from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+
+import { RootStackParamList } from "../types";
+import { AppColors } from "../constants/AppColors";
+import config from "../constants/Config";
 
 import MatchItem from "../components/MatchItem";
-import { AppColors } from "../constants/AppColors";
-
-import { useScrollToTop } from "@react-navigation/native";
 
 const users = require("../data/users.json");
 const numColumns = 2;
 type Props = NativeStackScreenProps<RootStackParamList, "Matches">;
 
-const formatData = (
-  data: { key: string; empty: boolean }[],
-  numColumns: number
-) => {
+type Match = {
+  key: string;
+  empty: boolean;
+  name: string;
+  age: number;
+  profilePictureUrl?: string;
+  profileId: string;
+};
+
+const formatData = (data: Match[], numColumns: number) => {
   const numberOfFullRows = Math.floor(data.length / numColumns);
 
   let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
@@ -38,7 +44,13 @@ const formatData = (
     numberOfElementsLastRow !== numColumns &&
     numberOfElementsLastRow !== 0
   ) {
-    data.push({ key: `blank-${numberOfElementsLastRow}`, empty: true });
+    data.push({
+      key: `blank-${numberOfElementsLastRow}`,
+      empty: true,
+      name: "",
+      age: 0,
+      profileId: "",
+    });
     numberOfElementsLastRow++;
   }
 
@@ -52,7 +64,7 @@ const wait = (timeout: number | undefined) => {
 export default function MatchesScreen({ navigation }: Props) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
-  const [matches, setMatches] = useState<any>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [numberOfMatches, setNumberOfMatches] = useState(0);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -108,12 +120,14 @@ export default function MatchesScreen({ navigation }: Props) {
               }
               ref={ref}
               data={formatData(matches, numColumns)}
-              renderItem={({ item }: any) => (
+              renderItem={({ item }: { item: Match }) => (
                 <TouchableHighlight
                   style={styles.touchable}
                   underlayColor="transparent"
                   disabled={item.empty}
-                  onPress={() => navigation.push("Detail", item.profileId)}
+                  onPress={() =>
+                    navigation.push("Detail", { profileId: item.profileId })
+                  }
                 >
                   <MatchItem
                     userName={item.name}

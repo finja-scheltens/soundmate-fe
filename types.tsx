@@ -16,11 +16,37 @@ declare global {
   }
 }
 
+export type UserData = {
+  profilePictureUrl: string;
+  name: string;
+  age: number;
+  contactInfo: string;
+  bio: string;
+};
+
+export type ArtistData = {
+  name: string;
+  imageUrl: string;
+};
+
+export type GenreData = {
+  name: string;
+};
+
+export type UserInfoParams = {
+  isLogin: boolean;
+};
+
+export type DetailParams = {
+  profileId: string;
+};
+
 export type RootStackParamList = {
   Login: undefined;
-  Detail: undefined;
-  UserInfo: undefined;
+  UserInfo: UserInfoParams;
+  Home: undefined;
   Matches: undefined;
+  Detail: DetailParams;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 
@@ -29,11 +55,11 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
 
 export type RootTabParamList = {
   Login: undefined;
+  UserInfo: undefined;
   Home: undefined;
   Matches: undefined;
-  AppInfo: undefined;
   Detail: undefined;
-  UserInfo: undefined;
+  AppInfo: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

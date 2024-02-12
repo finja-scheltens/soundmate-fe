@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   ImageSourcePropType,
+  ViewStyle,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -12,7 +13,7 @@ interface Props {
   imageSource: ImageSourcePropType;
   userName: string;
   userAge: number;
-  style?: any;
+  style?: ViewStyle;
 }
 
 export default function PrimaryButton({

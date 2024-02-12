@@ -140,13 +140,13 @@ function BottomTabNavigator() {
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}
-        options={({ navigation }: RootTabScreenProps<"Home">) => ({
+        options={{
           tabBarIcon: ({ focused }) => (
             <TabBarIcon
               name={focused ? "person-circle" : "person-circle-outline"}
             />
           ),
-        })}
+        }}
       />
       <BottomTab.Screen
         name="Matches"

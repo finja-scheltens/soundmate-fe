@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -10,30 +11,36 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+
+import { RootStackParamList } from "../types";
+import { AppColors } from "../constants/AppColors";
+import config from "../constants/Config";
 
 import PrimaryButton from "../components/PrimaryButton";
 
-import { AppColors } from "../constants/AppColors";
-import { RootStackParamList } from "../types";
-
-import  config  from "../constants/Config";
-import axios, { AxiosResponse } from "axios";
-import * as SecureStore from "expo-secure-store";
-
-const DismissKeyboard = ({ children }: any) => (
+const DismissKeyboard: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     {children}
   </TouchableWithoutFeedback>
 );
 
-type Props = NativeStackScreenProps<RootStackParamList, "UserInfo">;
+type UserInfoProps = {
+  navigation: NativeStackScreenProps<
+    RootStackParamList,
+    "UserInfo"
+  >["navigation"];
+  route: NativeStackScreenProps<RootStackParamList, "UserInfo">["route"];
+};
 
-export default function UserInfoScreen({ route, navigation }: Props | any) {
+export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
   const ref = React.useRef(null);
 
   const [instaName, onChangeInstaName] = useState("");
@@ -44,7 +51,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
   const [isLoading, setLoading] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
 
-  const isLogin = route.params.isLogin;
+  const { isLogin } = route.params;
 
   async function updateProfile() {
     setUpdateLoading(true);
@@ -117,7 +124,7 @@ export default function UserInfoScreen({ route, navigation }: Props | any) {
           <SafeAreaView style={styles.safeArea}>
             <Text style={styles.headline}>Deine Daten</Text>
             {!isLogin && (
-              <Pressable onPress={() => navigation.goBack()}>
+              <Pressable onPress={() => navigation.replace("Root")}>
                 <Ionicons name="close" size={32} color={AppColors.GREY_900} />
               </Pressable>
             )}
