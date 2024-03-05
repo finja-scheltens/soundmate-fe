@@ -8,15 +8,18 @@ import {
   ActivityIndicator,
   TouchableHighlight,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
-import { RootStackParamList, UserData, ArtistData, GenreData } from "../types";
+import { RootStackParamList, ArtistData, GenreData } from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
+import { RootState } from "../store/store";
+import { setUserData } from "../store/actions/user";
 
 import { Text } from "../components/Themed";
 import Badge from "../components/Badge";
@@ -29,9 +32,8 @@ export default function HomeScreen({ navigation }: HomeProps) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
 
-  const [usersData, setUsersData] = useState<UserData>({} as UserData);
-  const [topArtists, setTopArtists] = useState<ArtistData[]>([]);
-  const [topGenres, setTopGenres] = useState<GenreData[]>([]);
+  const dispatch = useDispatch();
+  const usersData = useSelector((state: RootState) => state.user.usersData);
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,9 +48,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         },
       })
         .then(response => {
-          setUsersData(response.data);
-          setTopArtists(response.data.topArtists);
-          setTopGenres(response.data.topGenres);
+          dispatch(setUserData(response.data));
         })
         .catch(error => {
           console.log("error", error.message);
@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         .finally(() => setLoading(false));
     };
     getProfileData();
-  }, []);
+  }, [dispatch]);
 
   async function logout() {
     await SecureStore.deleteItemAsync("token");
@@ -111,15 +111,15 @@ export default function HomeScreen({ navigation }: HomeProps) {
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Genres</Text>
           <View style={styles.genres}>
-            {topGenres.map((genre: GenreData, index: number) => (
-              <Badge key={index} text={genre.name} style={styles.genreBadge} />
+            {usersData.topGenres?.map((genre: GenreData, index: number) => (
+              <Badge key={index} text={genre.name} />
             ))}
           </View>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Künstler</Text>
           <View style={styles.artists}>
-            {topArtists.map((artist: ArtistData, index: number) => (
+            {usersData.topArtists?.map((artist: ArtistData, index: number) => (
               <ListItem
                 key={index}
                 text={artist.name}
@@ -220,10 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     flexWrap: "wrap",
-  },
-  genreBadge: {
-    marginRight: 10,
-    marginBottom: 10,
+    gap: 10,
   },
   artists: {
     marginTop: 12,

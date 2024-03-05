@@ -22,6 +22,8 @@ export type UserData = {
   age: number;
   contactInfo: string;
   bio: string;
+  topGenres: [];
+  topArtists: [];
 };
 
 export type ArtistData = {
