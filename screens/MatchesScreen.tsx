@@ -23,15 +23,13 @@ import * as SecureStore from "expo-secure-store";
 import { Entypo } from "@expo/vector-icons";
 import axios from "axios";
 
-import { GenreData, RootStackParamList } from "../types";
+import { RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
 import { RootState } from "../store/store";
 
 import MatchItem from "../components/MatchItem";
-import PrimaryButton from "../components/PrimaryButton";
-import SecondaryButton from "../components/SecondaryButton";
-import Badge from "../components/Badge";
+import FilterModal from "../components/FilterModal";
 
 const numColumns = 2;
 type Props = NativeStackScreenProps<RootStackParamList, "Matches">;
@@ -117,46 +115,11 @@ export default function MatchesScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Modal
-        animationType="fade"
-        visible={modalVisible}
-        transparent={true}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <SafeAreaProvider style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}>
-          <SafeAreaView style={styles.modalView}>
-            <Text style={styles.filterHeadline}>Filter</Text>
-            <View style={styles.filterContainer}>
-              <View>
-                <Text style={styles.genreHeadline}>Deine Top Genres</Text>
-                <View style={styles.genres}>
-                  {usersData.topGenres?.map(
-                    (genre: GenreData, index: number) => (
-                      <Badge key={index} text={genre.name} clickable={true} />
-                    )
-                  )}
-                </View>
-              </View>
-            </View>
-            <View style={styles.filterButtons}>
-              <SecondaryButton
-                title="Abbrechen"
-                style={{ flex: 1 }}
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-              />
-              <PrimaryButton
-                title="Anwenden"
-                style={{ flex: 1 }}
-                onPress={() => {}}
-              />
-            </View>
-          </SafeAreaView>
-        </SafeAreaProvider>
-      </Modal>
+      <FilterModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        usersData={usersData}
+      />
       <SafeAreaView style={styles.safeArea}>
         <Text style={styles.headline}>Matches</Text>
         <TouchableOpacity
@@ -307,46 +270,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     textAlign: "center",
-  },
-  modalView: {
-    flex: 1,
-    justifyContent: "center",
-    marginTop: 140,
-    backgroundColor: "white",
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 20,
-    paddingTop: -20,
-  },
-  filterHeadline: {
-    fontFamily: "Inter-Bold",
-    textAlign: "center",
-    fontSize: 22,
-  },
-  filterContainer: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginTop: 40,
-  },
-  genreHeadline: {
-    fontFamily: "Inter-Bold",
-    fontSize: 18,
-    color: AppColors.GREY_900,
-    marginBottom: 10,
-  },
-  genres: {
-    marginTop: 12,
-    backgroundColor: "white",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  filterButtons: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    gap: 14,
   },
 });

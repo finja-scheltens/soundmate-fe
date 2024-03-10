@@ -38,7 +38,6 @@ async function saveToken(value: string) {
 type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function LoginScreen({ navigation }: LoginProps) {
-  const dispatch = useDispatch();
   const [spotifyAuthCode, setSpotifyAuthCode] = useState("");
   const [backendJwtToken, setBackendJwtToken] = useState("");
   const [appIsReady, setAppIsReady] = useState(false);
