@@ -15,15 +15,16 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { Entypo } from "@expo/vector-icons";
 import axios from "axios";
 
-import { RootStackParamList } from "../types";
+import { GenderType, GenreData, RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
 import { RootState } from "../store/store";
@@ -41,6 +42,8 @@ type Match = {
   age: number;
   profilePictureUrl?: string;
   profileId: string;
+  genderType: GenderType;
+  topGenres: GenreData[];
 };
 
 const formatData = (data: Match[], numColumns: number) => {
@@ -56,7 +59,9 @@ const formatData = (data: Match[], numColumns: number) => {
       empty: true,
       name: "",
       age: 0,
+      genderType: GenderType.DIVERSE,
       profileId: "",
+      topGenres: [],
     });
     numberOfElementsLastRow++;
   }
@@ -72,6 +77,7 @@ export default function MatchesScreen({ navigation }: Props) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
   const usersData = useSelector((state: RootState) => state.user.usersData);
+  const [originalMatches, setOriginalMatches] = useState<Match[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [numberOfMatches, setNumberOfMatches] = useState(0);
 
@@ -79,7 +85,81 @@ export default function MatchesScreen({ navigation }: Props) {
   const [isLoading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  async function getMatches() {
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenders, setSelectedGenders] = useState<GenderType[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+    getMatches();
+  }, []);
+
+  useEffect(() => {
+    loadSavedFilters();
+  }, [originalMatches]);
+
+  const loadSavedFilters = async () => {
+    try {
+      const selectedGenresString = await AsyncStorage.getItem("selectedGenres");
+      const selectedGendersString = await AsyncStorage.getItem(
+        "selectedGenders"
+      );
+
+      if (selectedGenresString && selectedGendersString) {
+        const savedSelectedGenres = JSON.parse(selectedGenresString);
+        const savedSelectedGenders = JSON.parse(selectedGendersString);
+        setSelectedGenres(savedSelectedGenres);
+        setSelectedGenders(savedSelectedGenders);
+
+        applyFilters(savedSelectedGenres, savedSelectedGenders);
+      }
+    } catch (error) {
+      console.error("Error loading filters: ", error);
+    }
+  };
+
+  const saveSelectedFilters = async (
+    selectedGenres: string[],
+    selectedGenders: GenderType[]
+  ) => {
+    setSelectedGenres(selectedGenres);
+    setSelectedGenders(selectedGenders);
+    try {
+      await AsyncStorage.setItem(
+        "selectedGenres",
+        JSON.stringify(selectedGenres)
+      );
+      await AsyncStorage.setItem(
+        "selectedGenders",
+        JSON.stringify(selectedGenders)
+      );
+    } catch (error) {
+      console.error("Error saving filters: ", error);
+    }
+  };
+
+  const applyFilters = (
+    selectedGenres: string[],
+    selectedGenders: GenderType[]
+  ) => {
+    saveSelectedFilters(selectedGenres, selectedGenders);
+
+    const filteredMatches = originalMatches.filter(match => {
+      const genderMatch =
+        selectedGenders.length === 0 ||
+        selectedGenders.includes(match.genderType);
+
+      const genreMatch =
+        selectedGenres.length === 0 ||
+        match.topGenres.some(genre => selectedGenres.includes(genre.name));
+
+      return genderMatch && genreMatch;
+    });
+
+    setNumberOfMatches(filteredMatches.length);
+    setMatches(filteredMatches);
+  };
+
+  const getMatches = async () => {
     const token = await SecureStore.getItemAsync("token");
 
     axios(`${config.API_URL}/api/match`, {
@@ -89,8 +169,9 @@ export default function MatchesScreen({ navigation }: Props) {
       },
     })
       .then(response => {
-        setNumberOfMatches(response.data.length);
-        setMatches(response.data);
+        response.data.length
+          ? setOriginalMatches(response.data)
+          : setOriginalMatches([]);
       })
       .catch(error => {
         console.log("error", error.message);
@@ -100,17 +181,12 @@ export default function MatchesScreen({ navigation }: Props) {
           setLoading(false);
         }, 500)
       );
-  }
+  };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getMatches();
     wait(1000).then(() => setRefreshing(false));
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    getMatches();
   }, []);
 
   return (
@@ -119,6 +195,9 @@ export default function MatchesScreen({ navigation }: Props) {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         usersData={usersData}
+        savedSelectedGenres={selectedGenres}
+        savedSelectedGenders={selectedGenders}
+        onApplyFilters={applyFilters}
       />
       <SafeAreaView style={styles.safeArea}>
         <Text style={styles.headline}>Matches</Text>
@@ -127,6 +206,11 @@ export default function MatchesScreen({ navigation }: Props) {
           activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
         >
+          {selectedGenders.length || selectedGenres.length ? (
+            <View style={styles.outerFilterBadge}>
+              <View style={styles.innerFilterBadge}></View>
+            </View>
+          ) : null}
           <Entypo name="sound-mix" size={26} color={AppColors.GREY_900} />
         </TouchableOpacity>
       </SafeAreaView>
@@ -182,10 +266,19 @@ export default function MatchesScreen({ navigation }: Props) {
                 style={styles.noMatchesImage}
               />
               <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
-              <Text style={styles.noMatchesText}>
-                Leider konnten wir keine passenden Matches finden. Komm später
-                wieder oder lade die Seite neu!
-              </Text>
+
+              {originalMatches.length &&
+              (selectedGenders.length || selectedGenres.length) ? (
+                <Text style={styles.noMatchesText}>
+                  Oh-oh, leider gibt es keine passenden Matches zu deinen
+                  Filtereinstellungen.
+                </Text>
+              ) : (
+                <Text style={styles.noMatchesText}>
+                  Hoppala, leider konnten wir keine passenden Matches finden.
+                  Komm später wieder oder lade die Seite neu!
+                </Text>
+              )}
             </ScrollView>
           )}
         </View>
@@ -270,5 +363,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     textAlign: "center",
+  },
+  outerFilterBadge: {
+    position: "absolute",
+    top: -4,
+    right: -3,
+    width: 14,
+    height: 14,
+    borderRadius: 50,
+    backgroundColor: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 100,
+  },
+  innerFilterBadge: {
+    width: 8,
+    height: 8,
+    borderRadius: 50,
+    backgroundColor: AppColors.PRIMARY,
   },
 });

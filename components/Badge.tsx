@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,20 +11,29 @@ import { AppColors } from "../constants/AppColors";
 interface Props {
   text?: string;
   style?: ViewStyle;
-  clickable?: boolean; // New prop to control clickability
+  selected?: boolean;
+  onPress?: () => void;
 }
 
-export default function PrimaryButton({ text, clickable = false }: Props) {
+export default function Badge({ text, selected, onPress }: Props) {
   const [clicked, setClicked] = useState(false);
 
-  const handlePress = () => {
-    if (clickable) {
-      setClicked(!clicked);
+  useEffect(() => {
+    if (selected !== undefined) {
+      setClicked(selected);
     }
+  }, [selected]);
+
+  const handlePress = () => {
+    setClicked(!clicked);
+    onPress && onPress();
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={clickable ? 0.8 : 1}>
+    <TouchableOpacity
+      onPress={onPress ? handlePress : undefined}
+      activeOpacity={onPress ? 0.8 : 1}
+    >
       <View style={[styles.badge, clicked && styles.clicked]}>
         <Text style={[styles.badgeText, clicked && styles.badgeTextClicked]}>
           {text}
