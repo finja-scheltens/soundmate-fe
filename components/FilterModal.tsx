@@ -1,9 +1,9 @@
-import React from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Button, Modal, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { AppColors } from "../constants/AppColors";
-import { GenreData } from "../types";
+import { GenderType, GenreData } from "../types";
 
 import SecondaryButton from "../components/SecondaryButton";
 import Badge from "../components/Badge";
@@ -15,13 +15,63 @@ interface ModalProps {
   usersData: {
     topGenres?: GenreData[];
   };
+  savedSelectedGenres: string[];
+  savedSelectedGenders: GenderType[];
+  onApplyFilters: (
+    selectedGenres: string[],
+    selectedGender: GenderType[]
+  ) => void;
 }
 
 export default function FilterModal({
   modalVisible,
-  setModalVisible,
   usersData,
+  savedSelectedGenres,
+  savedSelectedGenders,
+  setModalVisible,
+  onApplyFilters,
 }: ModalProps) {
+  const [tempSelectedGenres, setTempSelectedGenres] = useState<string[]>([]);
+  const [tempSelectedGenders, setTempSelectedGenders] = useState<GenderType[]>(
+    []
+  );
+
+  useEffect(() => {
+    if (modalVisible) {
+      setTempSelectedGenres(savedSelectedGenres);
+      setTempSelectedGenders(savedSelectedGenders);
+    }
+  }, [modalVisible]);
+
+  const toggleGenreSelection = (genre: string) => {
+    if (tempSelectedGenres.includes(genre)) {
+      setTempSelectedGenres(tempSelectedGenres.filter(g => g !== genre));
+    } else {
+      setTempSelectedGenres([...tempSelectedGenres, genre]);
+    }
+  };
+
+  const toggleGenderSelection = (gender: GenderType) => {
+    if (tempSelectedGenders.includes(gender)) {
+      setTempSelectedGenders(tempSelectedGenders.filter(g => g !== gender));
+    } else {
+      setTempSelectedGenders([...tempSelectedGenders, gender]);
+    }
+  };
+  const handleResetFilters = () => {
+    setTempSelectedGenres([]);
+    setTempSelectedGenders([]);
+  };
+
+  const handleApplyFilters = () => {
+    onApplyFilters(tempSelectedGenres, tempSelectedGenders);
+    setModalVisible(false);
+  };
+
+  const handleCancelFilters = () => {
+    setModalVisible(false);
+  };
+
   return (
     <Modal
       animationType="fade"
@@ -33,25 +83,40 @@ export default function FilterModal({
     >
       <SafeAreaProvider style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}>
         <SafeAreaView style={styles.modalView}>
-          <Text style={styles.filterHeadline}>Filter</Text>
+          <View style={styles.filterHeader}>
+            <Text style={styles.filterHeadline}>Filter</Text>
+            <Button title="Zurücksetzen" onPress={handleResetFilters} />
+          </View>
           <View style={styles.filterContainer}>
             <View style={styles.filterOptions}>
               <View>
-                <Text style={styles.genreHeadline}>Deine Top Genres</Text>
+                <Text style={styles.genreHeadline}>Genres</Text>
                 <View style={styles.genres}>
-                  {usersData.topGenres?.map(
-                    (genre: GenreData, index: number) => (
-                      <Badge key={index} text={genre.name} clickable={true} />
+                  {usersData.topGenres
+                    ?.sort((a: GenreData, b: GenreData) =>
+                      a.name.localeCompare(b.name)
                     )
-                  )}
+                    .map((genre: GenreData, index: number) => (
+                      <Badge
+                        key={index}
+                        text={genre.name}
+                        selected={tempSelectedGenres.includes(genre.name)}
+                        onPress={() => toggleGenreSelection(genre.name)}
+                      />
+                    ))}
                 </View>
               </View>
               <View>
                 <Text style={styles.genreHeadline}>Geschlecht</Text>
                 <View style={styles.genres}>
-                  <Badge text="Männlich" clickable={true} />
-                  <Badge text="Weiblich" clickable={true} />
-                  <Badge text="Divers" clickable={true} />
+                  {Object.entries(GenderType).map(([key, value], index) => (
+                    <Badge
+                      key={index}
+                      text={value}
+                      selected={tempSelectedGenders.includes(key as GenderType)}
+                      onPress={() => toggleGenderSelection(key as GenderType)}
+                    />
+                  ))}
                 </View>
               </View>
             </View>
@@ -60,14 +125,12 @@ export default function FilterModal({
             <SecondaryButton
               title="Abbrechen"
               style={{ flex: 1 }}
-              onPress={() => {
-                setModalVisible(false);
-              }}
+              onPress={handleCancelFilters}
             />
             <PrimaryButton
               title="Anwenden"
               style={{ flex: 1 }}
-              onPress={() => {}}
+              onPress={handleApplyFilters}
             />
           </View>
         </SafeAreaView>
@@ -87,9 +150,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: -20,
   },
+  filterHeader: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   filterHeadline: {
     fontFamily: "Inter-Bold",
-    textAlign: "center",
     fontSize: 22,
   },
   filterContainer: {

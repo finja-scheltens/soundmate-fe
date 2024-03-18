@@ -111,9 +111,13 @@ export default function HomeScreen({ navigation }: HomeProps) {
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Genres</Text>
           <View style={styles.genres}>
-            {usersData.topGenres?.map((genre: GenreData, index: number) => (
-              <Badge key={index} text={genre.name} />
-            ))}
+            {usersData.topGenres
+              ?.sort((a: GenreData, b: GenreData) =>
+                a.name.localeCompare(b.name)
+              )
+              .map((genre: GenreData, index: number) => (
+                <Badge key={index} text={genre.name} />
+              ))}
           </View>
         </View>
         <View style={styles.infoContainer}>
