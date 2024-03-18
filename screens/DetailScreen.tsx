@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     flexWrap: "wrap",
+    gap: 10,
   },
   genreBadge: {
     marginRight: 10,
@@ -265,5 +266,12 @@ const styles = StyleSheet.create({
     bottom: 50,
     alignSelf: "center",
     width: "90%",
+    shadowColor: AppColors.GREY_900,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });

@@ -16,10 +16,17 @@ declare global {
   }
 }
 
+export enum GenderType {
+  MALE = "Männlich",
+  FEMALE = "Weiblich",
+  DIVERSE = "Divers",
+}
+
 export type UserData = {
   profilePictureUrl: string;
   name: string;
   age: number;
+  genderType: GenderType;
   contactInfo: string;
   bio: string;
   topGenres: [];
