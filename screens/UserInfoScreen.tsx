@@ -86,6 +86,8 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
     if (
       userName.trim() == "" ||
       userAge.trim() == "" ||
+      genderType === null ||
+      genderType.trim() == "" ||
       instaName.trim() == "" ||
       userBio.trim() == ""
     ) {
