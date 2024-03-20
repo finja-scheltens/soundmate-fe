@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
@@ -49,6 +50,11 @@ export default function HomeScreen({ navigation }: HomeProps) {
       })
         .then(response => {
           dispatch(setUserData(response.data));
+
+          const userData = response.data;
+          if (userData.name === "") {
+            navigation.replace("UserInfo", { isLogin: true });
+          }
         })
         .catch(error => {
           console.log("error", error.message);
@@ -59,7 +65,14 @@ export default function HomeScreen({ navigation }: HomeProps) {
   }, [dispatch]);
 
   async function logout() {
-    await SecureStore.deleteItemAsync("token");
+    try {
+      await SecureStore.deleteItemAsync("token");
+      await AsyncStorage.removeItem("selectedGenres");
+      await AsyncStorage.removeItem("selectedGenders");
+    } catch (error) {
+      console.error("Error removing stored values: ", error);
+    }
+
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
