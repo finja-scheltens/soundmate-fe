@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 
 import useCachedResources from "./hooks/useCachedResources";
@@ -38,26 +37,21 @@ export default function App() {
     return null;
   } else {
     return (
-      <GestureHandlerRootView style={styles.container}>
-        <SafeAreaProvider>
-          <Provider store={store}>
-            <Navigation
-              colorScheme={colorScheme}
-              newChatMessage={newChatMessage}
-            >
-              {newChatMessage && (
-                <ChatNotification
-                  messageProperties={messageProperties}
-                  onDismiss={() => {
-                    setNewChatMessage(false);
-                  }}
-                />
-              )}
-            </Navigation>
-            <StatusBar />
-          </Provider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
+      <SafeAreaProvider>
+        <Provider store={store}>
+          <Navigation colorScheme={colorScheme} newChatMessage={newChatMessage}>
+            {newChatMessage && (
+              <ChatNotification
+                messageProperties={messageProperties}
+                onDismiss={() => {
+                  setNewChatMessage(false);
+                }}
+              />
+            )}
+          </Navigation>
+          <StatusBar />
+        </Provider>
+      </SafeAreaProvider>
     );
   }
 }
