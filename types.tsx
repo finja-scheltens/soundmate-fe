@@ -48,7 +48,7 @@ export type RootStackParamList = {
   Matches: undefined;
   Detail: DetailParams;
   ChatList: undefined;
-  Chat: undefined;
+  Chat: DetailParams;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 

@@ -1,8 +1,11 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as React from "react";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { RootStackParamList } from "../types";
 
 const MOCK_MESSAGES = [
   {
@@ -18,9 +21,15 @@ const MOCK_MESSAGES = [
   },
 ];
 
-export default function ChatScreen() {
+type ChatProps = {
+  route: NativeStackScreenProps<RootStackParamList, "Chat">["route"];
+};
+
+export default function ChatScreen({ route }: ChatProps) {
   const [name, setName] = useState("Finja");
   const [messages, setMessages] = useState(MOCK_MESSAGES);
+
+  const { profileId } = route.params;
 
   const onSend = (newMessages: any) => {
     setMessages(GiftedChat.append(messages, newMessages));

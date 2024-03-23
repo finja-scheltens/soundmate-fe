@@ -137,7 +137,7 @@ export default function ChatListScreen({ navigation }: Props) {
         renderItem={({ item }) => (
           <TouchableHighlight
             underlayColor="transparent"
-            onPress={() => navigation.push("Chat")}
+            onPress={() => navigation.push("Chat", { profileId: item.id })}
           >
             <View style={styles.item}>
               <Image
@@ -148,7 +148,9 @@ export default function ChatListScreen({ navigation }: Props) {
               />
               <View style={styles.chatText}>
                 <Text style={styles.userName}>{item.userName}</Text>
-                <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+                <Text style={styles.lastMessage} numberOfLines={1}>
+                  {item.lastMessage}
+                </Text>
               </View>
             </View>
           </TouchableHighlight>
@@ -185,6 +187,7 @@ const styles = StyleSheet.create({
   },
   chatText: {
     gap: 6,
+    flex: 1,
   },
   userName: {
     fontSize: 16,
