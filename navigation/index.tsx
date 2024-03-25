@@ -4,8 +4,7 @@
  *
  */
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as SplashScreen from "expo-splash-screen";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -14,7 +13,13 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ColorSchemeName, View } from "react-native";
+import {
+  ColorSchemeName,
+  Image,
+  View,
+  Text,
+  TouchableHighlight,
+} from "react-native";
 
 import { AppColors } from "../constants/AppColors";
 
@@ -23,30 +28,32 @@ import useColorScheme from "../hooks/useColorScheme";
 // import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from "../screens/HomeScreen";
 import MatchesScreen from "../screens/MatchesScreen";
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types";
+import { RootStackParamList, RootTabParamList } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
-import AppInfoScreen from "../screens/AppInfoScreen";
 import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
+import ChatListScreen from "../screens/ChatListScreen";
+import ChatScreen from "../screens/ChatScreen";
 
-import * as SecureStore from "expo-secure-store";
+import Indicator from "../components/Indicator";
 
 export default function Navigation({
   colorScheme,
+  newChatMessage,
+  children,
 }: {
   colorScheme: ColorSchemeName;
+  newChatMessage: boolean;
+  children: ReactNode;
 }) {
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
-      <RootNavigator />
+      <RootNavigator newChatMessage={newChatMessage} />
+      {children}
     </NavigationContainer>
   );
 }
@@ -57,7 +64,46 @@ export default function Navigation({
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function RootNavigator() {
+// TODO: we need the name here
+type HeaderProps = {
+  profileId: string;
+};
+
+function Header({ profileId }: HeaderProps) {
+  return (
+    <TouchableHighlight
+      style={{
+        flex: 1,
+      }}
+    >
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
+        <Image
+          style={{ width: 35, height: 35, borderRadius: 50 }}
+          source={{
+            uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          }}
+        />
+        <Text
+          style={{
+            fontWeight: "600",
+            fontSize: 16,
+          }}
+        >
+          Name
+        </Text>
+      </View>
+    </TouchableHighlight>
+  );
+}
+
+function RootNavigator({ newChatMessage }: { newChatMessage: boolean }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -67,12 +113,13 @@ function RootNavigator() {
       />
       <Stack.Screen
         name="Root"
-        component={BottomTabNavigator}
         options={{
           headerShown: false,
           animation: "fade",
         }}
-      />
+      >
+        {() => <BottomTabNavigator newChatMessage={newChatMessage} />}
+      </Stack.Screen>
       <Stack.Screen
         name="UserInfo"
         component={UserInfoScreen}
@@ -86,30 +133,15 @@ function RootNavigator() {
         component={DetailScreen}
         options={{ headerShown: false }}
       />
-    </Stack.Navigator>
-  );
-}
-
-function SignedInNavigator() {
-  return (
-    <Stack.Navigator>
       <Stack.Screen
-        name="Root"
-        component={BottomTabNavigator}
-        options={{ headerShown: false, animationTypeForReplace: "pop" }}
-      />
-      <Stack.Screen
-        name="UserInfo"
-        component={UserInfoScreen}
-        options={{
-          headerShown: false,
-          animation: "fade",
-        }}
-      />
-      <Stack.Screen
-        name="Detail"
-        component={DetailScreen}
-        options={{ headerShown: false }}
+        name="Chat"
+        component={ChatScreen}
+        options={({ route, navigation }) => ({
+          headerTitle: props => <Header profileId={route.params.profileId} />,
+          headerBackTitleVisible: false,
+          headerTransparent: true,
+          headerBlurEffect: "light",
+        })}
       />
     </Stack.Navigator>
   );
@@ -121,7 +153,7 @@ function SignedInNavigator() {
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
-function BottomTabNavigator() {
+function BottomTabNavigator({ newChatMessage }: { newChatMessage: boolean }) {
   const colorScheme = useColorScheme();
 
   return (
@@ -157,18 +189,34 @@ function BottomTabNavigator() {
           ),
         }}
       />
+      {/* <BottomTab.Screen
+          name="AppInfo"
+          component={AppInfoScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                name={
+                  focused ? "information-circle" : "information-circle-outline"
+                }
+              />
+            ),
+          }}
+        /> */}
       <BottomTab.Screen
-        name="AppInfo"
-        component={AppInfoScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
-            />
-          ),
-        }}
+        name="ChatList"
+        component={ChatListScreen}
+        options={() => ({
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View style={{ position: "relative" }}>
+                <TabBarIcon
+                  name={focused ? "chatbubbles" : "chatbubbles-outline"}
+                />
+                {newChatMessage && <Indicator />}
+              </View>
+            );
+          },
+        })}
       />
     </BottomTab.Navigator>
   );

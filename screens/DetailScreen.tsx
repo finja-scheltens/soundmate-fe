@@ -34,6 +34,7 @@ type DetailProps = {
   >["navigation"];
   route: NativeStackScreenProps<RootStackParamList, "Detail">["route"];
 };
+
 export default function DetailScreen({ route, navigation }: DetailProps) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
@@ -146,16 +147,10 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
         </View>
       </ScrollView>
       <PrimaryButton
-        title="Sag Hallo auf Instagram"
+        title="Sag Hallo"
         style={styles.chatButton}
         onPress={() => {
-          Linking.openURL(
-            `instagram://user?username=${matchData.contactInfo}`
-          ).catch(() => {
-            Linking.openURL(
-              `https://www.instagram.com/${matchData.contactInfo}`
-            );
-          });
+          navigation.push("Chat", { profileId: profileId });
         }}
       />
     </View>
