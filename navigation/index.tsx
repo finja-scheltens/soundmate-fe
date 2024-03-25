@@ -14,7 +14,13 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ColorSchemeName, View } from "react-native";
+import {
+  ColorSchemeName,
+  Image,
+  View,
+  Text,
+  TouchableHighlight,
+} from "react-native";
 
 import { AppColors } from "../constants/AppColors";
 
@@ -33,6 +39,8 @@ import AppInfoScreen from "../screens/AppInfoScreen";
 import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
+import ChatListScreen from "../screens/ChatListScreen";
+import ChatScreen from "../screens/ChatScreen";
 
 import * as SecureStore from "expo-secure-store";
 
@@ -56,6 +64,40 @@ export default function Navigation({
  * https://reactnavigation.org/docs/modal
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+function Header() {
+  return (
+    <TouchableHighlight
+      style={{
+        flex: 1,
+      }}
+    >
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
+        <Image
+          style={{ width: 35, height: 35, borderRadius: 50 }}
+          source={{
+            uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          }}
+        />
+        <Text
+          style={{
+            fontWeight: "600",
+            fontSize: 16,
+          }}
+        >
+          Name
+        </Text>
+      </View>
+    </TouchableHighlight>
+  );
+}
 
 function RootNavigator() {
   return (
@@ -86,30 +128,15 @@ function RootNavigator() {
         component={DetailScreen}
         options={{ headerShown: false }}
       />
-    </Stack.Navigator>
-  );
-}
-
-function SignedInNavigator() {
-  return (
-    <Stack.Navigator>
       <Stack.Screen
-        name="Root"
-        component={BottomTabNavigator}
-        options={{ headerShown: false, animationTypeForReplace: "pop" }}
-      />
-      <Stack.Screen
-        name="UserInfo"
-        component={UserInfoScreen}
-        options={{
-          headerShown: false,
-          animation: "fade",
-        }}
-      />
-      <Stack.Screen
-        name="Detail"
-        component={DetailScreen}
-        options={{ headerShown: false }}
+        name="Chat"
+        component={ChatScreen}
+        options={({ route, navigation }) => ({
+          headerTitle: props => <Header />,
+          headerBackTitleVisible: false,
+          headerTransparent: true,
+          headerBlurEffect: "light",
+        })}
       />
     </Stack.Navigator>
   );
@@ -157,15 +184,26 @@ function BottomTabNavigator() {
           ),
         }}
       />
+      {/* <BottomTab.Screen
+          name="AppInfo"
+          component={AppInfoScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                name={
+                  focused ? "information-circle" : "information-circle-outline"
+                }
+              />
+            ),
+          }}
+        /> */}
       <BottomTab.Screen
-        name="AppInfo"
-        component={AppInfoScreen}
+        name="ChatList"
+        component={ChatListScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <TabBarIcon
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
+              name={focused ? "chatbubbles" : "chatbubbles-outline"}
             />
           ),
         }}
