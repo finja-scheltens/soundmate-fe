@@ -6,9 +6,11 @@ import {
   ScrollView,
   ImageBackground,
   Pressable,
+  Image,
   SafeAreaView,
   Linking,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -24,6 +26,7 @@ import { Text } from "../components/Themed";
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
 import Badge from "../components/Badge";
+import { Entypo } from "@expo/vector-icons";
 
 const user = require("../data/user.json");
 
@@ -118,6 +121,25 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
               color={AppColors.GREY_500}
             />
             <Text style={styles.subTextBio}>{matchData.bio}</Text>
+          </View>
+          {/* TODO: dynamisch */}
+          <View style={styles.matchingInfo}>
+            <View style={styles.matchingTextContainer}>
+              <Text style={styles.matchingText}>
+                Du und {matchData.name} habt ein 80% Match
+              </Text>
+              <TouchableOpacity
+                style={styles.moreInformation}
+                onPress={() => navigation.push("MatchingInfo")}
+              >
+                <Text>Mehr Informationen</Text>
+                <Entypo name="chevron-small-right" size={22} color="white" />
+              </TouchableOpacity>
+            </View>
+            <Image
+              source={require("../assets/images/match-image.png")}
+              style={styles.matchingImage}
+            />
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.genreHeadline}>Top Genres</Text>
@@ -235,6 +257,33 @@ const styles = StyleSheet.create({
     color: AppColors.GREY_500,
     marginLeft: 6,
     lineHeight: 18,
+  },
+  matchingInfo: {
+    marginTop: 35,
+    backgroundColor: AppColors.SECONDARY,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 40,
+  },
+  matchingTextContainer: {
+    flex: 1,
+    gap: 16,
+  },
+  matchingText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  matchingImage: {
+    height: 100,
+    width: 100,
+    resizeMode: "contain",
+  },
+  moreInformation: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   infoContainer: {
     backgroundColor: "white",

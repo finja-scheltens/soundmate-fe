@@ -56,6 +56,7 @@ export type RootStackParamList = {
   Home: undefined;
   Matches: undefined;
   Detail: DetailParams;
+  MatchingInfo: undefined;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 
@@ -68,6 +69,7 @@ export type RootTabParamList = {
   Home: undefined;
   Matches: undefined;
   Detail: undefined;
+  MatchingInfo: undefined;
   AppInfo: undefined;
 };
 
