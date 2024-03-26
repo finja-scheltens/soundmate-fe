@@ -32,6 +32,7 @@ import LinkingConfiguration from "./LinkingConfiguration";
 import AppInfoScreen from "../screens/AppInfoScreen";
 import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
+import MatchingInfoScreen from "../screens/MatchingInfoScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
 
 import * as SecureStore from "expo-secure-store";
@@ -84,6 +85,11 @@ function RootNavigator() {
       <Stack.Screen
         name="Detail"
         component={DetailScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MatchingInfo"
+        component={MatchingInfoScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
