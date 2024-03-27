@@ -10,13 +10,39 @@ import {
 
 import { AppColors } from "../constants/AppColors";
 
-export default function MatchRadarChart() {
+type RadarChartProps = {
+  userFactors: {
+    novelFactor: number;
+    mainstreamFactor: number;
+    diverseFactor: number;
+  };
+  matchFactors: {
+    novelFactor: number;
+    mainstreamFactor: number;
+    diverseFactor: number;
+  };
+};
+
+export default function MatchRadarChart({
+  userFactors,
+  matchFactors,
+}: RadarChartProps) {
+  const allFactors = [
+    userFactors.novelFactor,
+    userFactors.mainstreamFactor,
+    userFactors.diverseFactor,
+    matchFactors.novelFactor,
+    matchFactors.mainstreamFactor,
+    matchFactors.diverseFactor,
+  ];
+
+  const maxFactor = Math.max(...allFactors);
+
   return (
-    // TODO: set maximum for domain ?
     <VictoryChart
       polar
       theme={VictoryTheme.material}
-      domain={{ y: [0, 1] }}
+      maxDomain={{ y: maxFactor }}
       startAngle={70}
       endAngle={430}
       height={320}
@@ -44,9 +70,9 @@ export default function MatchRadarChart() {
       <VictoryArea
         interpolation="catmullRom"
         data={[
-          { x: "Novel", y: 1 },
-          { x: "Divers", y: 1 },
-          { x: "Mainstream", y: 0.4 },
+          { x: "Novel", y: userFactors.novelFactor },
+          { x: "Divers", y: userFactors.diverseFactor },
+          { x: "Mainstream", y: userFactors.mainstreamFactor },
         ]}
         style={{
           data: {
@@ -64,9 +90,9 @@ export default function MatchRadarChart() {
       <VictoryArea
         interpolation="catmullRom"
         data={[
-          { x: "Novel", y: 1 },
-          { x: "Divers", y: 0.5 },
-          { x: "Mainstream", y: 0.9 },
+          { x: "Novel", y: matchFactors.novelFactor },
+          { x: "Divers", y: matchFactors.diverseFactor },
+          { x: "Mainstream", y: matchFactors.mainstreamFactor },
         ]}
         style={{
           data: {

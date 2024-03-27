@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,27 +8,22 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Defs, LinearGradient, Stop } from "react-native-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {
-  VictoryChart,
-  VictoryArea,
-  VictoryTheme,
-  VictoryPolarAxis,
-} from "victory-native";
 
 import { RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
 import { Text } from "../components/Themed";
 import MatchRadarChart from "../components/MatchRadarChart";
+import MatchExplanationModal from "../components/MatchExplanationModal";
 
 type MatchingInfoProps = {
   navigation: NativeStackScreenProps<
     RootStackParamList,
     "MatchingInfo"
   >["navigation"];
+  route: NativeStackScreenProps<RootStackParamList, "MatchingInfo">["route"];
 };
 
 // TODO: dynamisch
@@ -35,6 +31,9 @@ const match = {
   name: "Hans Peter Müller",
   profilePictureUrl:
     "https://www.santander.com/content/dam/santander-com/es/stories/cabecera/2021/bancaresponsable/im-storie-liderazgo-femenino-una-apuesta-por-un-futuro-mas-igualitario-movil.jpg.transform/rendition-sm/image.jpg",
+  novelFactor: 0.003,
+  mainstreamFactor: 0.0059,
+  diverseFactor: 0.0081,
 };
 
 // TODO: dynamisch (store)
@@ -42,13 +41,33 @@ const user = {
   name: "Hans Peter Müller",
   profilePictureUrl:
     "https://www.santander.com/content/dam/santander-com/es/stories/cabecera/2021/bancaresponsable/im-storie-liderazgo-femenino-una-apuesta-por-un-futuro-mas-igualitario-movil.jpg.transform/rendition-sm/image.jpg",
+  novelFactor: 0.0054,
+  mainstreamFactor: 0.0063,
+  diverseFactor: 0.0082,
 };
 
 export default function MatchingInfoScreen({ navigation }: MatchingInfoProps) {
   const ref = React.useRef(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const userFactors = {
+    novelFactor: user.novelFactor,
+    mainstreamFactor: user.mainstreamFactor,
+    diverseFactor: user.diverseFactor,
+  };
+
+  const matchFactors = {
+    novelFactor: match.novelFactor,
+    mainstreamFactor: match.mainstreamFactor,
+    diverseFactor: match.diverseFactor,
+  };
 
   return (
     <ScrollView ref={ref} style={styles.scrollContainer}>
+      <MatchExplanationModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
       <SafeAreaView>
         <Pressable
           style={styles.backButton}
@@ -100,9 +119,14 @@ export default function MatchingInfoScreen({ navigation }: MatchingInfoProps) {
           </View>
         </View>
         {/* TODO: dynamisch */}
-        <MatchRadarChart />
+        <MatchRadarChart
+          userFactors={userFactors}
+          matchFactors={matchFactors}
+        />
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={() => {
+            setModalVisible(true);
+          }}
           style={styles.explanationContainer}
         >
           <Text style={styles.explanation}>Was bedeutet das? 🤔</Text>
