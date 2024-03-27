@@ -31,6 +31,9 @@ export type UserData = {
   bio: string;
   topGenres: [];
   topArtists: [];
+  novelFactor: number;
+  mainstreamFactor: number;
+  diverseFactor: number;
 };
 
 export type ArtistData = {
@@ -50,13 +53,18 @@ export type DetailParams = {
   profileId: string;
 };
 
+export type MatchingInfoParams = {
+  matchData: UserData;
+  matchingPercentage: number;
+};
+
 export type RootStackParamList = {
   Login: undefined;
   UserInfo: UserInfoParams;
   Home: undefined;
   Matches: undefined;
   Detail: DetailParams;
-  MatchingInfo: undefined;
+  MatchingInfo: MatchingInfoParams;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 

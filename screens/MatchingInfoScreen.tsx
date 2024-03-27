@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -15,6 +16,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
 import { Text } from "../components/Themed";
+import { RootState } from "../store/store";
+
 import MatchRadarChart from "../components/MatchRadarChart";
 import MatchExplanationModal from "../components/MatchExplanationModal";
 
@@ -26,40 +29,27 @@ type MatchingInfoProps = {
   route: NativeStackScreenProps<RootStackParamList, "MatchingInfo">["route"];
 };
 
-// TODO: dynamisch
-const match = {
-  name: "Hans Peter Müller",
-  profilePictureUrl:
-    "https://www.santander.com/content/dam/santander-com/es/stories/cabecera/2021/bancaresponsable/im-storie-liderazgo-femenino-una-apuesta-por-un-futuro-mas-igualitario-movil.jpg.transform/rendition-sm/image.jpg",
-  novelFactor: 0.003,
-  mainstreamFactor: 0.0059,
-  diverseFactor: 0.0081,
-};
-
-// TODO: dynamisch (store)
-const user = {
-  name: "Hans Peter Müller",
-  profilePictureUrl:
-    "https://www.santander.com/content/dam/santander-com/es/stories/cabecera/2021/bancaresponsable/im-storie-liderazgo-femenino-una-apuesta-por-un-futuro-mas-igualitario-movil.jpg.transform/rendition-sm/image.jpg",
-  novelFactor: 0.0054,
-  mainstreamFactor: 0.0063,
-  diverseFactor: 0.0082,
-};
-
-export default function MatchingInfoScreen({ navigation }: MatchingInfoProps) {
+export default function MatchingInfoScreen({
+  navigation,
+  route,
+}: MatchingInfoProps) {
   const ref = React.useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const usersData = useSelector((state: RootState) => state.user.usersData);
+  const { matchData } = route.params;
+  const { matchingPercentage } = route.params;
+
   const userFactors = {
-    novelFactor: user.novelFactor,
-    mainstreamFactor: user.mainstreamFactor,
-    diverseFactor: user.diverseFactor,
+    novelFactor: usersData.novelFactor,
+    mainstreamFactor: usersData.mainstreamFactor,
+    diverseFactor: usersData.diverseFactor,
   };
 
   const matchFactors = {
-    novelFactor: match.novelFactor,
-    mainstreamFactor: match.mainstreamFactor,
-    diverseFactor: match.diverseFactor,
+    novelFactor: matchData.novelFactor,
+    mainstreamFactor: matchData.mainstreamFactor,
+    diverseFactor: matchData.diverseFactor,
   };
 
   return (
@@ -78,47 +68,51 @@ export default function MatchingInfoScreen({ navigation }: MatchingInfoProps) {
         <Text style={styles.matchingHeadline}>✨ It's a match ✨</Text>
         <View style={styles.matchingContainer}>
           <View style={styles.userInfoContainer}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={
-                  user.profilePictureUrl
-                    ? { uri: user.profilePictureUrl }
-                    : require("../assets/images/avatar2.png")
-                }
-                style={styles.userImages}
-              />
+            <View style={styles.shadowContainer}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={
+                    usersData.profilePictureUrl
+                      ? { uri: usersData.profilePictureUrl }
+                      : require("../assets/images/avatar2.png")
+                  }
+                  style={styles.userImages}
+                />
+              </View>
             </View>
             <View style={styles.userNameContainer}>
               <Text style={styles.userNameText}>Du</Text>
             </View>
           </View>
           <View style={styles.matchingPercentageContainer}>
-            {/* TODO: dynamisch */}
-            <Text style={styles.matchingPercentageText}>80%</Text>
+            <Text style={styles.matchingPercentageText}>
+              {matchingPercentage}%
+            </Text>
             <Image
               source={require("../assets/images/match-percentage-bg.png")}
               style={styles.matchingPercentageImage}
             />
           </View>
           <View style={styles.matchInfoContainer}>
-            <View style={[styles.matchNameContainer]}>
+            <View style={styles.matchNameContainer}>
               <Text style={styles.userNameText} numberOfLines={1}>
-                {match.name}
+                {matchData.name}
               </Text>
             </View>
-            <View style={styles.imageContainer}>
-              <Image
-                source={
-                  match.profilePictureUrl
-                    ? { uri: match.profilePictureUrl }
-                    : require("../assets/images/avatar2.png")
-                }
-                style={styles.userImages}
-              />
+            <View style={styles.shadowContainer}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={
+                    matchData.profilePictureUrl
+                      ? { uri: matchData.profilePictureUrl }
+                      : require("../assets/images/avatar2.png")
+                  }
+                  style={styles.userImages}
+                />
+              </View>
             </View>
           </View>
         </View>
-        {/* TODO: dynamisch */}
         <MatchRadarChart
           userFactors={userFactors}
           matchFactors={matchFactors}
@@ -186,9 +180,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
+  shadowContainer: {
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+  },
   imageContainer: {
     overflow: "hidden",
-    borderRadius: 10,
+    borderRadius: 12,
     width: 160,
     height: 190,
   },
@@ -200,13 +204,13 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.PRIMARY,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   matchNameContainer: {
     backgroundColor: AppColors.SECONDARY,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   userNameText: {
     fontWeight: "600",
