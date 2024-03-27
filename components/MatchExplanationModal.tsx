@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import { Modal, StyleSheet, Text, View, ScrollView } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import PrimaryButton from "./PrimaryButton";
@@ -25,25 +25,42 @@ export default function MatchExplanationModal({
     >
       <SafeAreaProvider style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}>
         <SafeAreaView style={styles.modalView}>
-          <View style={styles.explanationHeader}>
-            <Text style={styles.explanationHeadline}>Erklärung zu Matches</Text>
-            <Text>Novel? Mainstream? Divers?</Text>
-          </View>
-
-          <View style={styles.explanationContainer}>
-            <View>
-              <Text style={styles.factorHeadline}>Novel</Text>
-              <Text>Lorem ipsum dolar sit amet</Text>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.explanationHeader}>
+              <Text style={styles.explanationHeadline}>
+                Erklärung zu Matches
+              </Text>
+              <Text style={styles.factorExplanation}>
+                Dein Musikgeschmack kann in drei Faktoren unterteilt werden. Ein
+                hoher Matching-Faktor bedeutet eine starke Überereinstimmung der
+                Werte zwischen dir und deinem Match.
+              </Text>
             </View>
-            <View>
-              <Text style={styles.factorHeadline}>Mainstream</Text>
-              <Text>Lorem ipsum dolar sit amet</Text>
+            <View style={styles.explanationContainer}>
+              <View>
+                <Text style={styles.factorHeadline}>Novel</Text>
+                <Text style={styles.factorExplanation}>
+                  Bist du im Herzen ein Musikpionier? Dieser Faktor misst dein
+                  Interesse an neuer und unbekannter Musik.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.factorHeadline}>Mainstream</Text>
+                <Text style={styles.factorExplanation}>
+                  Schwimmst du mit dem Strom? Dieser Faktor zeigt, wie sehr dein
+                  Musikgeschmack mit dem der Allgemeinheit übereinstimmt.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.factorHeadline}>Divers</Text>
+                <Text style={styles.factorExplanation}>
+                  Bist du ein musikalischer Weltenbummler? Dieser Faktor zeigt,
+                  wie bunt und vielfältig dein Musikgeschmack über verschiedene
+                  Genres hinweg ist.
+                </Text>
+              </View>
             </View>
-            <View>
-              <Text style={styles.factorHeadline}>Divers</Text>
-              <Text>Lorem ipsum dolar sit amet</Text>
-            </View>
-          </View>
+          </ScrollView>
           <View>
             <PrimaryButton
               title="Alles klar!"
@@ -68,6 +85,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: -20,
   },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
   explanationHeader: {
     paddingHorizontal: 4,
     gap: 16,
@@ -77,9 +97,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   explanationContainer: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
     marginTop: 40,
     paddingHorizontal: 4,
     gap: 30,
@@ -89,5 +106,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: AppColors.GREY_900,
     marginBottom: 10,
+  },
+  factorExplanation: {
+    fontSize: 16,
+    color: AppColors.GREY_700,
   },
 });
