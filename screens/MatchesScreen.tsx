@@ -111,6 +111,9 @@ export default function MatchesScreen({ navigation }: Props) {
         setSelectedGenders(savedSelectedGenders);
 
         applyFilters(savedSelectedGenres, savedSelectedGenders);
+      } else {
+        setNumberOfMatches(originalMatches.length);
+        setMatches(originalMatches);
       }
     } catch (error) {
       console.error("Error loading filters: ", error);
