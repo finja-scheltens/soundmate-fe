@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
   subTextBio: {
     fontFamily: "Inter-Regular",
-    fontSize: 16,
+    fontSize: 14,
     color: AppColors.GREY_700,
     lineHeight: 18,
     marginVertical: 24,
