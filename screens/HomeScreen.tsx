@@ -13,10 +13,16 @@ import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
-import { RootStackParamList, ArtistData, GenreData } from "../types";
+import {
+  RootStackParamList,
+  ArtistData,
+  GenreData,
+  GenderType,
+} from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
 import { RootState } from "../store/store";
@@ -105,22 +111,29 @@ export default function HomeScreen({ navigation }: HomeProps) {
             />
           </View>
         </View>
-        <View style={styles.subInfo}>
+        <View style={styles.instaInfo}>
           <Ionicons
             name="logo-instagram"
             size={18}
-            color={AppColors.GREY_500}
+            color={AppColors.GREY_700}
           />
-          <Text style={styles.subText}>{usersData.contactInfo}</Text>
+          <Text style={styles.infoText}>{usersData.contactInfo}</Text>
         </View>
-        <View style={styles.subInfoBio}>
-          <Ionicons
-            name="chatbubble-outline"
+        <View style={styles.genderInfo}>
+          <FontAwesome6
+            name="person-half-dress"
             size={18}
-            color={AppColors.GREY_500}
+            color={AppColors.GREY_700}
           />
-          <Text style={styles.subTextBio}>{usersData.bio}</Text>
+          <Text style={styles.infoText}>
+            {
+              GenderType[
+                usersData.genderType as string as keyof typeof GenderType
+              ]
+            }
+          </Text>
         </View>
+        <Text style={styles.subTextBio}>{usersData.bio}</Text>
         <View style={styles.infoContainer}>
           <Text style={styles.genreHeadline}>Deine Top Genres</Text>
           <View style={styles.genres}>
@@ -197,35 +210,34 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: AppColors.GREY_900,
   },
-  subInfo: {
+  instaInfo: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 6,
-    marginRight: 20,
   },
-  subInfoBio: {
+  genderInfo: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 6,
-    marginRight: 20,
+    marginTop: 8,
+    marginLeft: 3,
+    gap: 4,
   },
-  subText: {
+  infoText: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
-    color: AppColors.GREY_500,
+    color: AppColors.GREY_700,
     marginLeft: 6,
   },
   subTextBio: {
     fontFamily: "Inter-Regular",
-    fontSize: 14,
-    color: AppColors.GREY_500,
-    marginLeft: 6,
-    lineHeight: 19,
+    fontSize: 16,
+    color: AppColors.GREY_700,
+    lineHeight: 18,
+    marginVertical: 24,
   },
   infoContainer: {
     backgroundColor: "white",
-    marginTop: 35,
+    marginTop: 12,
   },
   genreHeadline: {
     fontFamily: "Inter-Bold",

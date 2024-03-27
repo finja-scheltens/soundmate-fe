@@ -15,10 +15,17 @@ import {
 import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
-import { RootStackParamList, UserData, ArtistData, GenreData } from "../types";
+import {
+  RootStackParamList,
+  UserData,
+  ArtistData,
+  GenreData,
+  GenderType,
+} from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
 
@@ -26,7 +33,6 @@ import { Text } from "../components/Themed";
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
 import Badge from "../components/Badge";
-import { Entypo } from "@expo/vector-icons";
 
 const user = require("../data/user.json");
 
@@ -37,6 +43,7 @@ type DetailProps = {
   >["navigation"];
   route: NativeStackScreenProps<RootStackParamList, "Detail">["route"];
 };
+
 export default function DetailScreen({ route, navigation }: DetailProps) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
@@ -110,25 +117,31 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
             <Ionicons
               name="logo-instagram"
               size={18}
-              color={AppColors.GREY_500}
+              color={AppColors.GREY_700}
             />
-            <Text style={styles.eMail}>{matchData.contactInfo}</Text>
+            <Text style={styles.infoText}>{matchData.contactInfo}</Text>
           </View>
-          <View style={styles.subInfoBio}>
-            <Ionicons
-              name="chatbubble-outline"
+          <View style={styles.genderInfo}>
+            <FontAwesome6
+              name="person-half-dress"
               size={18}
-              color={AppColors.GREY_500}
+              color={AppColors.GREY_700}
             />
-            <Text style={styles.subTextBio}>{matchData.bio}</Text>
+            <Text style={styles.infoText}>
+              {
+                GenderType[
+                  matchData.genderType as string as keyof typeof GenderType
+                ]
+              }
+            </Text>
           </View>
+          <Text style={styles.subTextBio}>{matchData.bio}</Text>
           {/* TODO: dynamisch */}
           <View style={styles.matchingInfo}>
             <View style={styles.matchingTextContainer}>
               <Text style={styles.matchingText}>
                 Du und {matchData.name} habt ein 80% Match
               </Text>
-              {/* TODO: pass matchData */}
               <TouchableOpacity
                 style={styles.moreInformation}
                 onPress={() => navigation.push("MatchingInfo")}
@@ -232,35 +245,36 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: AppColors.GREY_900,
     marginTop: 25,
-    marginBottom: 6,
+    marginBottom: 12,
   },
   instaInfo: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
   },
-  subInfoBio: {
+  genderInfo: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 6,
-    marginRight: 20,
+    marginTop: 8,
+    marginLeft: 3,
+    gap: 4,
   },
-  eMail: {
+  infoText: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
-    color: AppColors.GREY_500,
+    color: AppColors.GREY_700,
     marginLeft: 6,
   },
   subTextBio: {
     fontFamily: "Inter-Regular",
-    fontSize: 14,
-    color: AppColors.GREY_500,
-    marginLeft: 6,
+    fontSize: 16,
+    color: AppColors.GREY_700,
     lineHeight: 18,
+    marginVertical: 24,
+    marginLeft: 3,
   },
   matchingInfo: {
-    marginTop: 35,
+    marginTop: 12,
     backgroundColor: AppColors.SECONDARY,
     paddingHorizontal: 18,
     paddingVertical: 10,
