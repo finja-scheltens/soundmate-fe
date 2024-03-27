@@ -128,6 +128,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
               <Text style={styles.matchingText}>
                 Du und {matchData.name} habt ein 80% Match
               </Text>
+              {/* TODO: pass matchData */}
               <TouchableOpacity
                 style={styles.moreInformation}
                 onPress={() => navigation.push("MatchingInfo")}
