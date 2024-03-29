@@ -186,7 +186,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
                 </Text>
                 <Text style={styles.bioExamplesText}>
                   Zum Beispiel: Welches Lied bringt dich immer zum Tanzen oder
-                  welches singst du laustark mit?
+                  welches singst du lautstark mit?
                 </Text>
                 <TextInput
                   editable
