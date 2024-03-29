@@ -233,11 +233,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: AppColors.GREY_700,
     lineHeight: 18,
-    marginVertical: 24,
+    marginTop: 24,
   },
   infoContainer: {
     backgroundColor: "white",
-    marginTop: 12,
+    marginTop: 35,
   },
   genreHeadline: {
     fontFamily: "Inter-Bold",

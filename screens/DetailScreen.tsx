@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     marginLeft: 3,
   },
   matchingInfo: {
-    marginTop: 12,
+    marginTop: 8,
     backgroundColor: AppColors.SECONDARY,
     paddingHorizontal: 18,
     paddingVertical: 10,
