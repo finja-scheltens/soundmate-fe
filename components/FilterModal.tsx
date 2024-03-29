@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+} from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { AppColors } from "../constants/AppColors";
@@ -87,40 +94,44 @@ export default function FilterModal({
             <Text style={styles.filterHeadline}>Filter</Text>
             <Button title="Zurücksetzen" onPress={handleResetFilters} />
           </View>
-          <View style={styles.filterContainer}>
-            <View style={styles.filterOptions}>
-              <View>
-                <Text style={styles.genreHeadline}>Genres</Text>
-                <View style={styles.genres}>
-                  {usersData.topGenres
-                    ?.sort((a: GenreData, b: GenreData) =>
-                      a.name.localeCompare(b.name)
-                    )
-                    .map((genre: GenreData, index: number) => (
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.filterContainer}>
+              <View style={styles.filterOptions}>
+                <View>
+                  <Text style={styles.genreHeadline}>Genres</Text>
+                  <View style={styles.genres}>
+                    {usersData.topGenres
+                      ?.sort((a: GenreData, b: GenreData) =>
+                        a.name.localeCompare(b.name)
+                      )
+                      .map((genre: GenreData, index: number) => (
+                        <Badge
+                          key={index}
+                          text={genre.name}
+                          selected={tempSelectedGenres.includes(genre.name)}
+                          onPress={() => toggleGenreSelection(genre.name)}
+                        />
+                      ))}
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.genreHeadline}>Geschlecht</Text>
+                  <View style={styles.genres}>
+                    {Object.entries(GenderType).map(([key, value], index) => (
                       <Badge
                         key={index}
-                        text={genre.name}
-                        selected={tempSelectedGenres.includes(genre.name)}
-                        onPress={() => toggleGenreSelection(genre.name)}
+                        text={value}
+                        selected={tempSelectedGenders.includes(
+                          key as GenderType
+                        )}
+                        onPress={() => toggleGenderSelection(key as GenderType)}
                       />
                     ))}
-                </View>
-              </View>
-              <View>
-                <Text style={styles.genreHeadline}>Geschlecht</Text>
-                <View style={styles.genres}>
-                  {Object.entries(GenderType).map(([key, value], index) => (
-                    <Badge
-                      key={index}
-                      text={value}
-                      selected={tempSelectedGenders.includes(key as GenderType)}
-                      onPress={() => toggleGenderSelection(key as GenderType)}
-                    />
-                  ))}
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
+          </ScrollView>
           <View style={styles.filterButtons}>
             <SecondaryButton
               title="Abbrechen"
@@ -159,6 +170,9 @@ const styles = StyleSheet.create({
   filterHeadline: {
     fontFamily: "Inter-Bold",
     fontSize: 22,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
   },
   filterContainer: {
     flex: 1,
