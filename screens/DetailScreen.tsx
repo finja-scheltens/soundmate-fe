@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Regular",
     fontSize: 14,
     color: AppColors.GREY_700,
-    lineHeight: 18,
+    lineHeight: 20,
     marginVertical: 24,
     marginLeft: 3,
   },

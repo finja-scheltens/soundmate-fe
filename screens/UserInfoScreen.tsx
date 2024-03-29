@@ -184,6 +184,10 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
                 <Text style={styles.infoHeadline}>
                   Was möchtest du über dich erzählen?
                 </Text>
+                <Text style={styles.bioExamplesText}>
+                  Zum Beispiel: Welches Lied bringt dich immer zum Tanzen oder
+                  welches singst du laustark mit?
+                </Text>
                 <TextInput
                   editable
                   multiline
@@ -244,16 +248,21 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingLeft: 10,
   },
+  bioExamplesText: {
+    color: AppColors.GREY_700,
+    lineHeight: 20,
+  },
   inputMulti: {
     borderColor: AppColors.GREY_300,
     color: AppColors.GREY_900,
     borderWidth: 1,
     borderRadius: 6,
-    paddingLeft: 10,
     minHeight: 100,
     maxHeight: 100,
-    paddingTop: 10,
+    padding: 10,
+    marginTop: 20,
     marginBottom: 120,
+    lineHeight: 20,
   },
   submitButton: {
     position: "absolute",
