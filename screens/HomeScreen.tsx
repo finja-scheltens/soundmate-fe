@@ -101,37 +101,39 @@ export default function HomeScreen({ navigation }: HomeProps) {
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.userData}>
-          <Text style={styles.userName}>
-            {usersData.name}, {usersData.age}
-          </Text>
+          <View>
+            <Text style={styles.userName}>
+              {usersData.name}, {usersData.age}
+            </Text>
+            <View style={styles.instaInfo}>
+              <Ionicons
+                name="logo-instagram"
+                size={18}
+                color={AppColors.GREY_700}
+              />
+              <Text style={styles.infoText}>{usersData.contactInfo}</Text>
+            </View>
+            <View style={styles.genderInfo}>
+              <FontAwesome6
+                name="person-half-dress"
+                size={18}
+                color={AppColors.GREY_700}
+              />
+              <Text style={styles.infoText}>
+                {
+                  GenderType[
+                    usersData.genderType as string as keyof typeof GenderType
+                  ]
+                }
+              </Text>
+            </View>
+          </View>
           <View>
             <SecondaryButton
               title="Ändern"
               onPress={() => navigation.replace("UserInfo", { isLogin: false })}
             />
           </View>
-        </View>
-        <View style={styles.instaInfo}>
-          <Ionicons
-            name="logo-instagram"
-            size={18}
-            color={AppColors.GREY_700}
-          />
-          <Text style={styles.infoText}>{usersData.contactInfo}</Text>
-        </View>
-        <View style={styles.genderInfo}>
-          <FontAwesome6
-            name="person-half-dress"
-            size={18}
-            color={AppColors.GREY_700}
-          />
-          <Text style={styles.infoText}>
-            {
-              GenderType[
-                usersData.genderType as string as keyof typeof GenderType
-              ]
-            }
-          </Text>
         </View>
         <Text style={styles.subTextBio}>{usersData.bio}</Text>
         <View style={styles.infoContainer}>
@@ -203,12 +205,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 25,
-    marginBottom: 6,
   },
   userName: {
     fontFamily: "Inter-Bold",
     fontSize: 26,
     color: AppColors.GREY_900,
+    marginBottom: 12,
   },
   instaInfo: {
     display: "flex",
@@ -232,7 +234,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Regular",
     fontSize: 14,
     color: AppColors.GREY_700,
-    lineHeight: 18,
+    lineHeight: 20,
     marginTop: 24,
   },
   infoContainer: {
