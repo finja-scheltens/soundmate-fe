@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: 20,
     paddingTop: -20,
   },
   filterHeader: {
@@ -166,6 +165,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingBottom: 14,
+    shadowColor: AppColors.GREY_900,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   filterHeadline: {
     fontFamily: "Inter-Bold",
@@ -173,6 +182,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
+    paddingHorizontal: 20,
   },
   filterContainer: {
     flex: 1,
@@ -204,5 +214,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     gap: 14,
+    paddingHorizontal: 20,
   },
 });

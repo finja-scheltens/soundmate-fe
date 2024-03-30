@@ -10,9 +10,6 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
-  Alert,
-  Modal,
-  Pressable,
   TouchableOpacity,
 } from "react-native";
 import { useSelector } from "react-redux";
@@ -297,16 +294,22 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   safeArea: {
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 25,
-    marginHorizontal: 20,
+    backgroundColor: "white",
+    paddingTop: 25,
+    paddingHorizontal: 20,
+    shadowColor: AppColors.GREY_900,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   defaultContainer: {
-    flex: 1,
-    backgroundColor: "white",
+    flexGrow: 1,
   },
   touchable: {
     flex: 1,
@@ -324,6 +327,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter-Medium",
     fontSize: 14,
     color: AppColors.GREY_500,
+    marginTop: 30,
     marginLeft: 10,
     marginBottom: 10,
   },
