@@ -124,18 +124,18 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
   }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.headline}>Deine Daten</Text>
+        {!isLogin && (
+          <Pressable onPress={() => navigation.replace("Root")}>
+            <Ionicons name="close" size={32} color={AppColors.GREY_900} />
+          </Pressable>
+        )}
+      </SafeAreaView>
       <KeyboardAwareScrollView ref={ref} style={styles.scrollContainer}>
         <DismissKeyboard>
-          <SafeAreaView>
-            <View style={styles.infoHeader}>
-              <Text style={styles.headline}>Deine Daten</Text>
-              {!isLogin && (
-                <Pressable onPress={() => navigation.replace("Root")}>
-                  <Ionicons name="close" size={32} color={AppColors.GREY_900} />
-                </Pressable>
-              )}
-            </View>
+          <View>
             {isLoading && !isLogin && (
               <ActivityIndicator style={styles.loading} />
             )}
@@ -201,7 +201,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
                 />
               </View>
             )}
-          </SafeAreaView>
+          </View>
         </DismissKeyboard>
       </KeyboardAwareScrollView>
       <PrimaryButton
@@ -215,18 +215,31 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
   loading: {
     marginTop: 30,
   },
   scrollContainer: {
     flexGrow: 1,
-    backgroundColor: "white",
-    padding: 20,
+    paddingHorizontal: 20,
   },
-  infoHeader: {
+  safeArea: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: "white",
+    paddingTop: 25,
+    paddingHorizontal: 20,
+    shadowColor: AppColors.GREY_900,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   headline: {
     fontFamily: "Inter-Bold",
@@ -261,7 +274,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     padding: 10,
     marginTop: 20,
-    marginBottom: 120,
+    marginBottom: 130,
     lineHeight: 20,
   },
   submitButton: {
