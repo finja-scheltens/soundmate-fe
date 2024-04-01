@@ -1,21 +1,25 @@
-import { ActionTypes } from "../actions/user";
+import {
+  UserActionTypes,
+  RESET_USER_DATA,
+  SET_USER_DATA,
+} from "../actions/user";
 import { UserData } from "../../types";
-
-type UserAction = {
-  type: string;
-  user: UserData;
-};
 
 const initialState = {
   usersData: {} as UserData,
 };
 
-const userReducer = (state = initialState, action: UserAction) => {
+const userReducer = (state = initialState, action: UserActionTypes) => {
   switch (action.type) {
-    case ActionTypes.SET_USER_DATA:
+    case SET_USER_DATA:
       return {
         ...state,
-        usersData: action.user,
+        usersData: action.payload,
+      };
+    case RESET_USER_DATA:
+      return {
+        ...state,
+        usersData: {} as UserData,
       };
     default:
       return state;

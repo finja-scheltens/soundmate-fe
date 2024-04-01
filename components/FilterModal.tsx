@@ -6,11 +6,15 @@ import {
   Text,
   View,
   ScrollView,
+  Switch,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import Slider from "@react-native-community/slider";
 
 import { AppColors } from "../constants/AppColors";
-import { GenderType, GenreData } from "../types";
+import { GenderType, GenreData, UserLocation } from "../types";
 
 import SecondaryButton from "../components/SecondaryButton";
 import Badge from "../components/Badge";
@@ -24,9 +28,14 @@ interface ModalProps {
   };
   savedSelectedGenres: string[];
   savedSelectedGenders: GenderType[];
+  savedDistanceValue: number | undefined;
+  savedDistanceFilterEnabled: boolean;
+  userLocation: UserLocation["location"];
   onApplyFilters: (
     selectedGenres: string[],
-    selectedGender: GenderType[]
+    selectedGender: GenderType[],
+    distanceValue: number | undefined,
+    distanceFilterEnabled: boolean
   ) => void;
 }
 
@@ -35,6 +44,9 @@ export default function FilterModal({
   usersData,
   savedSelectedGenres,
   savedSelectedGenders,
+  savedDistanceValue,
+  savedDistanceFilterEnabled,
+  userLocation,
   setModalVisible,
   onApplyFilters,
 }: ModalProps) {
@@ -42,11 +54,24 @@ export default function FilterModal({
   const [tempSelectedGenders, setTempSelectedGenders] = useState<GenderType[]>(
     []
   );
+  const [tempDistanceValue, setTempDistanceValue] = useState<
+    number | undefined
+  >(10);
+  const [tempIsRadiusEnabled, setTempIsRadiusEnabled] = useState(false);
+
+  useEffect(() => {
+    // enable radius filter only when location access is permitted
+    userLocation === null
+      ? setTempIsRadiusEnabled(false)
+      : setTempIsRadiusEnabled(savedDistanceFilterEnabled);
+  }, [userLocation]);
 
   useEffect(() => {
     if (modalVisible) {
       setTempSelectedGenres(savedSelectedGenres);
       setTempSelectedGenders(savedSelectedGenders);
+      setTempDistanceValue(savedDistanceValue);
+      setTempIsRadiusEnabled(savedDistanceFilterEnabled);
     }
   }, [modalVisible]);
 
@@ -65,19 +90,43 @@ export default function FilterModal({
       setTempSelectedGenders([...tempSelectedGenders, gender]);
     }
   };
+
+  const toggleSwitch = () => {
+    setTempIsRadiusEnabled(previousState => !previousState);
+  };
+
+  const handleDisabledClick = () => {
+    if (userLocation === null) {
+      Alert.alert(
+        "Standortdienste aus",
+        "Gehe in die Einstellungen und prüfe, ob Soundmate auf deinen Standort zugreifen darf.",
+        [{ text: "OK" }]
+      );
+    }
+  };
+
   const handleResetFilters = () => {
     setTempSelectedGenres([]);
     setTempSelectedGenders([]);
+    setTempIsRadiusEnabled(false);
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters(tempSelectedGenres, tempSelectedGenders);
+    onApplyFilters(
+      tempSelectedGenres,
+      tempSelectedGenders,
+      tempDistanceValue,
+      tempIsRadiusEnabled
+    );
     setModalVisible(false);
   };
 
   const handleCancelFilters = () => {
     setModalVisible(false);
   };
+
+  // disable slider if either the switch is deactivated or user location is not available
+  const isRadiusSliderDisabled = !tempIsRadiusEnabled || userLocation === null;
 
   return (
     <Modal
@@ -98,8 +147,8 @@ export default function FilterModal({
             <View style={styles.filterContainer}>
               <View style={styles.filterOptions}>
                 <View>
-                  <Text style={styles.genreHeadline}>Genres</Text>
-                  <View style={styles.genres}>
+                  <Text style={styles.optionHeadline}>Genres</Text>
+                  <View style={styles.options}>
                     {usersData.topGenres
                       ?.sort((a: GenreData, b: GenreData) =>
                         a.name.localeCompare(b.name)
@@ -115,8 +164,8 @@ export default function FilterModal({
                   </View>
                 </View>
                 <View>
-                  <Text style={styles.genreHeadline}>Geschlecht</Text>
-                  <View style={styles.genres}>
+                  <Text style={styles.optionHeadline}>Geschlecht</Text>
+                  <View style={styles.options}>
                     {Object.entries(GenderType).map(([key, value], index) => (
                       <Badge
                         key={index}
@@ -127,6 +176,52 @@ export default function FilterModal({
                         onPress={() => toggleGenderSelection(key as GenderType)}
                       />
                     ))}
+                  </View>
+                </View>
+                <View>
+                  <View style={styles.radiusHeader}>
+                    <Text style={styles.optionHeadline}>Radius</Text>
+                    <Text style={styles.radiusValue}>
+                      {tempDistanceValue} km
+                    </Text>
+                  </View>
+                  <Slider
+                    minimumValue={1}
+                    maximumValue={400}
+                    step={10}
+                    disabled={isRadiusSliderDisabled}
+                    minimumTrackTintColor={
+                      isRadiusSliderDisabled
+                        ? AppColors.GREY_500
+                        : AppColors.SECONDARY
+                    }
+                    maximumTrackTintColor={AppColors.GREY_200}
+                    thumbTintColor={
+                      isRadiusSliderDisabled
+                        ? AppColors.GREY_500
+                        : AppColors.SECONDARY
+                    }
+                    value={tempDistanceValue}
+                    onValueChange={value => setTempDistanceValue(value)}
+                  />
+                  <View style={styles.radiusSwitchContainer}>
+                    <Text style={styles.radiusSwitchText}>
+                      Zeige nur Matches in diesem Radius
+                    </Text>
+                    <TouchableOpacity onPress={handleDisabledClick}>
+                      <Switch
+                        trackColor={{
+                          false: AppColors.GREY_200,
+                          true: AppColors.SECONDARY,
+                        }}
+                        style={userLocation === null && { opacity: 0.4 }}
+                        thumbColor="white"
+                        ios_backgroundColor={AppColors.GREY_300}
+                        disabled={userLocation === null}
+                        value={tempIsRadiusEnabled}
+                        onValueChange={toggleSwitch}
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
@@ -154,7 +249,7 @@ const styles = StyleSheet.create({
   modalView: {
     flex: 1,
     justifyContent: "center",
-    marginTop: 140,
+    marginTop: 120,
     backgroundColor: "white",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -175,6 +270,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    zIndex: 1000,
   },
   filterHeadline: {
     fontFamily: "Inter-Bold",
@@ -183,37 +279,61 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
+    paddingBottom: 60,
   },
   filterContainer: {
     flex: 1,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    marginTop: 40,
+    marginTop: 30,
   },
   filterOptions: {
     display: "flex",
     flexDirection: "column",
     gap: 40,
   },
-  genreHeadline: {
+  optionHeadline: {
     fontFamily: "Inter-Bold",
     fontSize: 18,
     color: AppColors.GREY_900,
     marginBottom: 10,
   },
-  genres: {
+  options: {
     marginTop: 12,
     backgroundColor: "white",
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
   },
+  radiusHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  radiusValue: {
+    fontWeight: "600",
+    color: AppColors.GREY_700,
+  },
+  radiusSwitchContainer: {
+    marginTop: 14,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  radiusSwitchText: {
+    color: AppColors.GREY_900,
+    fontSize: 16,
+  },
   filterButtons: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-evenly",
     gap: 14,
+    paddingTop: 14,
     paddingHorizontal: 20,
+    borderTopColor: AppColors.GREY_200,
+    borderTopWidth: 1,
   },
 });
