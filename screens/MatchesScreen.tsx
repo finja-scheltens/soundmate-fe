@@ -21,10 +21,16 @@ import * as SecureStore from "expo-secure-store";
 import { Entypo } from "@expo/vector-icons";
 import axios from "axios";
 
-import { GenderType, GenreData, RootStackParamList } from "../types";
+import {
+  GenderType,
+  GenreData,
+  RootStackParamList,
+  UserLocation,
+} from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
 import { RootState } from "../store/store";
+import calculateDistance from "../utils";
 
 import MatchItem from "../components/MatchItem";
 import FilterModal from "../components/FilterModal";
@@ -41,6 +47,8 @@ type Match = {
   profileId: string;
   genderType: GenderType;
   topGenres: GenreData[];
+  latitude: number;
+  longitude: number;
 };
 
 const formatData = (data: Match[], numColumns: number) => {
@@ -59,6 +67,8 @@ const formatData = (data: Match[], numColumns: number) => {
       genderType: GenderType.DIVERSE,
       profileId: "",
       topGenres: [],
+      latitude: 0,
+      longitude: 0,
     });
     numberOfElementsLastRow++;
   }
@@ -74,6 +84,9 @@ export default function MatchesScreen({ navigation }: Props) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
   const usersData = useSelector((state: RootState) => state.user.usersData);
+  const storedLocation = useSelector(
+    (state: { location: UserLocation }) => state.location.location
+  );
   const [originalMatches, setOriginalMatches] = useState<Match[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [numberOfMatches, setNumberOfMatches] = useState(0);
@@ -84,6 +97,9 @@ export default function MatchesScreen({ navigation }: Props) {
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedGenders, setSelectedGenders] = useState<GenderType[]>([]);
+  const [distanceValue, setDistanceValue] = useState<number | undefined>(10);
+  const [distanceFilterEnabled, setDistanceFilterEnabled] =
+    useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -92,22 +108,53 @@ export default function MatchesScreen({ navigation }: Props) {
 
   useEffect(() => {
     loadSavedFilters();
-  }, [originalMatches]);
+  }, [originalMatches, storedLocation]);
 
   const loadSavedFilters = async () => {
     try {
-      const selectedGenresString = await AsyncStorage.getItem("selectedGenres");
-      const selectedGendersString = await AsyncStorage.getItem(
-        "selectedGenders"
-      );
+      // load AsyncStorage filter items
+      const filterKeys = [
+        "selectedGenres",
+        "selectedGenders",
+        "distanceValue",
+        "distanceFilterEnabled",
+      ];
 
-      if (selectedGenresString && selectedGendersString) {
-        const savedSelectedGenres = JSON.parse(selectedGenresString);
-        const savedSelectedGenders = JSON.parse(selectedGendersString);
-        setSelectedGenres(savedSelectedGenres);
-        setSelectedGenders(savedSelectedGenders);
+      const filterValues = await AsyncStorage.multiGet(filterKeys);
 
-        applyFilters(savedSelectedGenres, savedSelectedGenders);
+      // set stored value or null
+      const filters: any = {};
+      filterValues.forEach(([key, value]) => {
+        filters[key] = value ? JSON.parse(value) : null;
+      });
+
+      const {
+        selectedGenres,
+        selectedGenders,
+        distanceValue,
+        distanceFilterEnabled,
+      } = filters;
+
+      // set state variables if stored filter exists
+      if (selectedGenres) setSelectedGenres(selectedGenres);
+      if (selectedGenders) setSelectedGenders(selectedGenders);
+      if (distanceValue) setDistanceValue(distanceValue);
+      if (distanceFilterEnabled)
+        setDistanceFilterEnabled(distanceFilterEnabled);
+
+      // filter matches based on stored values
+      if (
+        selectedGenres ||
+        selectedGenders ||
+        distanceValue ||
+        distanceFilterEnabled
+      ) {
+        applyFilters(
+          selectedGenres,
+          selectedGenders,
+          distanceValue,
+          distanceFilterEnabled
+        );
       } else {
         setNumberOfMatches(originalMatches.length);
         setMatches(originalMatches);
@@ -119,19 +166,22 @@ export default function MatchesScreen({ navigation }: Props) {
 
   const saveSelectedFilters = async (
     selectedGenres: string[],
-    selectedGenders: GenderType[]
+    selectedGenders: GenderType[],
+    distanceValue: number | undefined,
+    distanceFilterEnabled: boolean
   ) => {
     setSelectedGenres(selectedGenres);
     setSelectedGenders(selectedGenders);
+    if (distanceValue) setDistanceValue(distanceValue);
+    setDistanceFilterEnabled(distanceFilterEnabled);
+
     try {
-      await AsyncStorage.setItem(
-        "selectedGenres",
-        JSON.stringify(selectedGenres)
-      );
-      await AsyncStorage.setItem(
-        "selectedGenders",
-        JSON.stringify(selectedGenders)
-      );
+      await AsyncStorage.multiSet([
+        ["selectedGenres", JSON.stringify(selectedGenres)],
+        ["selectedGenders", JSON.stringify(selectedGenders)],
+        ["distanceValue", JSON.stringify(distanceValue)],
+        ["distanceFilterEnabled", JSON.stringify(distanceFilterEnabled)],
+      ]);
     } catch (error) {
       console.error("Error saving filters: ", error);
     }
@@ -139,11 +189,19 @@ export default function MatchesScreen({ navigation }: Props) {
 
   const applyFilters = (
     selectedGenres: string[],
-    selectedGenders: GenderType[]
+    selectedGenders: GenderType[],
+    distanceValue: number | undefined,
+    distanceFilterEnabled: boolean
   ) => {
-    saveSelectedFilters(selectedGenres, selectedGenders);
+    saveSelectedFilters(
+      selectedGenres,
+      selectedGenders,
+      distanceValue,
+      distanceFilterEnabled
+    );
 
-    const filteredMatches = originalMatches.filter(match => {
+    // filter matches based on badge filters (genres and gender)
+    let filteredMatches = originalMatches.filter(match => {
       const genderMatch =
         selectedGenders.length === 0 ||
         selectedGenders.includes(match.genderType);
@@ -155,6 +213,23 @@ export default function MatchesScreen({ navigation }: Props) {
       return genderMatch && genreMatch;
     });
 
+    // filter matches based on radius filter
+    if (storedLocation && distanceFilterEnabled && distanceValue) {
+      filteredMatches = filteredMatches.filter(match => {
+        // filter only users who have permitted their location
+        if (match.latitude && match.longitude) {
+          const distance = calculateDistance(
+            storedLocation.latitude,
+            storedLocation.longitude,
+            match.latitude,
+            match.longitude
+          );
+
+          return distance <= distanceValue;
+        }
+        return false;
+      });
+    }
     setNumberOfMatches(filteredMatches.length);
     setMatches(filteredMatches);
   };
@@ -197,6 +272,9 @@ export default function MatchesScreen({ navigation }: Props) {
         usersData={usersData}
         savedSelectedGenres={selectedGenres}
         savedSelectedGenders={selectedGenders}
+        savedDistanceValue={distanceValue}
+        savedDistanceFilterEnabled={distanceFilterEnabled}
+        userLocation={storedLocation}
         onApplyFilters={applyFilters}
       />
       <SafeAreaView style={styles.safeArea}>
@@ -206,7 +284,9 @@ export default function MatchesScreen({ navigation }: Props) {
           activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
         >
-          {selectedGenders.length || selectedGenres.length ? (
+          {selectedGenders.length ||
+          selectedGenres.length ||
+          distanceFilterEnabled ? (
             <View style={styles.outerFilterBadge}>
               <View style={styles.innerFilterBadge}></View>
             </View>
@@ -268,7 +348,9 @@ export default function MatchesScreen({ navigation }: Props) {
               <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
 
               {originalMatches.length &&
-              (selectedGenders.length || selectedGenres.length) ? (
+              (selectedGenders.length ||
+                selectedGenres.length ||
+                distanceFilterEnabled) ? (
                 <Text style={styles.noMatchesText}>
                   Oh-oh, leider gibt es keine passenden Matches zu deinen
                   Filtereinstellungen.

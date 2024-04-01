@@ -36,6 +36,13 @@ export type UserData = {
   diverseFactor: number;
 };
 
+export interface UserLocation {
+  location: {
+    latitude: number;
+    longitude: number;
+  } | null;
+}
+
 export type ArtistData = {
   name: string;
   imageUrl: string;
