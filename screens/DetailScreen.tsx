@@ -11,6 +11,7 @@ import {
   Linking,
   ActivityIndicator,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useScrollToTop } from "@react-navigation/native";
@@ -103,6 +104,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
       diverseFactor: matchData.diverseFactor,
     };
 
+    // calculate euclidean distance between two points in 3D space
     const squaredDistance = Object.keys(userFactors).reduce((acc, key) => {
       const factorKey = key as keyof Factors;
       return (
@@ -110,6 +112,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
       );
     }, 0);
 
+    // normalize distance with maximum possible distance and calculate matching percentage for specific match
     const distanceNoramalized = Math.sqrt(squaredDistance) / Math.sqrt(3);
     const matchingPercentage = Math.round((1 - distanceNoramalized) * 100);
 
@@ -188,7 +191,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
                   })
                 }
               >
-                <Text>Mehr Informationen</Text>
+                <Text style={{ color: "white" }}>Mehr Informationen</Text>
                 <Entypo name="chevron-small-right" size={22} color="white" />
               </TouchableOpacity>
             </View>
@@ -274,7 +277,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 20,
-    marginTop: 10,
+    marginTop: Platform.OS === "android" ? 40 : 10,
     borderColor: AppColors.GREY_300,
     borderWidth: 0.5,
   },
@@ -333,6 +336,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     lineHeight: 22,
+    color: "white",
   },
   matchingImage: {
     height: 100,
@@ -370,7 +374,7 @@ const styles = StyleSheet.create({
   },
   chatButton: {
     position: "absolute",
-    bottom: 50,
+    bottom: 45,
     alignSelf: "center",
     width: "90%",
     shadowColor: AppColors.GREY_900,

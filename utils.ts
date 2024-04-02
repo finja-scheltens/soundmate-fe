@@ -1,3 +1,4 @@
+// using haversine formula to calculate distance between two points on a sphere given their latitude and longitude
 const calculateDistance = (
   lat1: number,
   lon1: number,

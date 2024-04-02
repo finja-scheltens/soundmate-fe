@@ -11,6 +11,7 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useScrollToTop } from "@react-navigation/native";
@@ -107,6 +108,7 @@ export default function MatchesScreen({ navigation }: Props) {
   }, []);
 
   useEffect(() => {
+    // check for saved filters when matches or location data changes
     loadSavedFilters();
   }, [originalMatches, storedLocation]);
 
@@ -158,6 +160,7 @@ export default function MatchesScreen({ navigation }: Props) {
       } else {
         setNumberOfMatches(originalMatches.length);
         setMatches(originalMatches);
+        wait(500).then(() => setLoading(false));
       }
     } catch (error) {
       console.error("Error loading filters: ", error);
@@ -232,6 +235,7 @@ export default function MatchesScreen({ navigation }: Props) {
     }
     setNumberOfMatches(filteredMatches.length);
     setMatches(filteredMatches);
+    wait(500).then(() => setLoading(false));
   };
 
   const getMatches = async () => {
@@ -250,12 +254,7 @@ export default function MatchesScreen({ navigation }: Props) {
       })
       .catch(error => {
         console.log("error", error.message);
-      })
-      .finally(() =>
-        setTimeout(() => {
-          setLoading(false);
-        }, 500)
-      );
+      });
   };
 
   const onRefresh = React.useCallback(() => {
@@ -389,6 +388,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    elevation: 4,
+    paddingBottom: Platform.OS === "android" ? 14 : 0,
   },
   defaultContainer: {
     flexGrow: 1,

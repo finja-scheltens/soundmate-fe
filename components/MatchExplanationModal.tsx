@@ -1,5 +1,12 @@
 import React from "react";
-import { Modal, StyleSheet, Text, View, ScrollView } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import PrimaryButton from "./PrimaryButton";
@@ -83,10 +90,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
-    paddingTop: -20,
+    paddingTop: Platform.OS === "ios" ? -20 : 20,
+    paddingBottom: 10,
   },
   scrollViewContent: {
     flexGrow: 1,
+    paddingBottom: 60,
   },
   explanationHeader: {
     paddingHorizontal: 4,

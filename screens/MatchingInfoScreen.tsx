@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
   userNameText: {
     fontWeight: "600",
     maxWidth: 100,
+    color: "white",
   },
   matchingPercentageContainer: {
     position: "absolute",
