@@ -9,6 +9,7 @@ import {
   Switch,
   TouchableOpacity,
   Alert,
+  Platform,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
@@ -141,7 +142,9 @@ export default function FilterModal({
         <SafeAreaView style={styles.modalView}>
           <View style={styles.filterHeader}>
             <Text style={styles.filterHeadline}>Filter</Text>
-            <Button title="Zurücksetzen" onPress={handleResetFilters} />
+            <TouchableOpacity onPress={handleResetFilters}>
+              <Text style={styles.resetFilterButtonText}>Zurücksetzen</Text>
+            </TouchableOpacity>
           </View>
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <View style={styles.filterContainer}>
@@ -214,7 +217,12 @@ export default function FilterModal({
                           false: AppColors.GREY_200,
                           true: AppColors.SECONDARY,
                         }}
-                        style={userLocation === null && { opacity: 0.4 }}
+                        style={{
+                          ...(userLocation === null && { opacity: 0.5 }),
+                          ...(Platform.OS === "android" && {
+                            transform: [{ scaleX: 1.4 }, { scaleY: 1.4 }],
+                          }),
+                        }}
                         thumbColor="white"
                         ios_backgroundColor={AppColors.GREY_300}
                         disabled={userLocation === null}
@@ -254,6 +262,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: -20,
+    paddingBottom: 10,
   },
   filterHeader: {
     display: "flex",
@@ -263,18 +272,18 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 20,
     paddingBottom: 14,
-    shadowColor: AppColors.GREY_900,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.GREY_200,
     zIndex: 1000,
+    paddingTop: Platform.OS === "android" ? 20 : 0,
   },
   filterHeadline: {
     fontFamily: "Inter-Bold",
     fontSize: 22,
+  },
+  resetFilterButtonText: {
+    color: AppColors.SECONDARY,
+    fontSize: 16,
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -321,10 +330,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: 10,
   },
   radiusSwitchText: {
     color: AppColors.GREY_900,
     fontSize: 16,
+    flexWrap: "wrap",
+    flex: 1,
   },
   filterButtons: {
     display: "flex",

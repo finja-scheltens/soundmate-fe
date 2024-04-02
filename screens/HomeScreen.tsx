@@ -118,7 +118,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         return;
       }
 
-      // permission granted: get current location, compare with stored one and update if neccessary
+      // permission granted: get current location, compare with stored one and update if neccessary (store location in redux store to avoid api calls when filtering by radius)
       let currentLocation = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = currentLocation.coords;
 

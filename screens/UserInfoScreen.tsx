@@ -10,6 +10,7 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -240,6 +241,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    elevation: 4,
+    paddingBottom: Platform.OS === "android" ? 14 : 0,
   },
   headline: {
     fontFamily: "Inter-Bold",
@@ -279,7 +282,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     position: "absolute",
-    bottom: 50,
+    bottom: 45,
     alignSelf: "center",
     width: "90%",
     shadowColor: AppColors.GREY_900,
