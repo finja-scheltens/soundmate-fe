@@ -142,7 +142,7 @@ export default function FilterModal({
         <SafeAreaView style={styles.modalView}>
           <View style={styles.filterHeader}>
             <Text style={styles.filterHeadline}>Filter</Text>
-            <TouchableOpacity onPress={handleResetFilters}>
+            <TouchableOpacity hitSlop={15} onPress={handleResetFilters}>
               <Text style={styles.resetFilterButtonText}>Zurücksetzen</Text>
             </TouchableOpacity>
           </View>
@@ -211,7 +211,10 @@ export default function FilterModal({
                     <Text style={styles.radiusSwitchText}>
                       Zeige nur Matches in diesem Radius
                     </Text>
-                    <TouchableOpacity onPress={handleDisabledClick}>
+                    <TouchableOpacity
+                      hitSlop={15}
+                      onPress={handleDisabledClick}
+                    >
                       <Switch
                         trackColor={{
                           false: AppColors.GREY_200,
