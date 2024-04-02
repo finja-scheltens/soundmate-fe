@@ -183,6 +183,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
                 Du und {matchData.name} habt ein {matchingPercentage}% Match
               </Text>
               <TouchableOpacity
+                hitSlop={15}
                 style={styles.moreInformation}
                 onPress={() =>
                   navigation.push("MatchingInfo", {

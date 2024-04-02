@@ -118,6 +118,7 @@ export default function MatchingInfoScreen({
           matchFactors={matchFactors}
         />
         <TouchableOpacity
+          hitSlop={15}
           onPress={() => {
             setModalVisible(true);
           }}
