@@ -41,6 +41,14 @@ export type DetailParams = {
   profileId: string;
 };
 
+export type ChatParams = {
+  chatId: string;
+  name: string;
+  profilePictureUrl: string;
+  senderProfileId: string;
+  recipientProfileId: string;
+}
+
 export type RootStackParamList = {
   Login: undefined;
   UserInfo: UserInfoParams;
@@ -48,7 +56,7 @@ export type RootStackParamList = {
   Matches: undefined;
   Detail: DetailParams;
   ChatList: undefined;
-  Chat: DetailParams;
+  Chat: ChatParams;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 
@@ -63,7 +71,7 @@ export type RootTabParamList = {
   Detail: undefined;
   AppInfo: undefined;
   ChatList: undefined;
-  Chat: undefined;
+  Chat: ChatParams;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

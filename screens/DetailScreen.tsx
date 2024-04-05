@@ -150,7 +150,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
         title="Sag Hallo"
         style={styles.chatButton}
         onPress={() => {
-          navigation.push("Chat", { profileId: profileId });
+          navigation.push("Chat", { chatId: profileId,name: matchData.name, profilePictureUrl: matchData.profilePictureUrl });
         }}
       />
     </View>

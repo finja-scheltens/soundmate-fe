@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import tokenReducer from "./store/reducers/token";
 import ChatNotification from "./components/ChatNotification";
+import * as encoding from "text-encoding";
 
 const rootReducer = combineReducers({
   token: tokenReducer,
@@ -29,6 +30,12 @@ const messageProperties = {
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
+
+  const TextEncodingPolyfill = require("text-encoding");
+  Object.assign(global, {
+    TextEncoder: TextEncodingPolyfill.TextEncoder,
+    TextDecoder: TextEncodingPolyfill.TextDecoder,
+  });
 
   // TODO: don't use one boolean for notification and indicator
   const [newChatMessage, setNewChatMessage] = useState(true);

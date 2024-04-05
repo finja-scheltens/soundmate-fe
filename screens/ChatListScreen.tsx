@@ -7,9 +7,15 @@ import {
   Text,
   Image,
   TouchableHighlight,
+  ActivityIndicator,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+import config from "../constants/Config";
+import { WebSocketClient } from "../hooks/WebSocketClient";
 
 import { RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
@@ -23,87 +29,25 @@ const DATA = [
     lastMessage: "Hallo i bims",
     uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-bd91aa97f63",
-    userName: "Second Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-14571e29d72",
-    userName: "Third Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "bd7acbea-c11-46c2-aed5-3ad53abb2ba",
-    userName: "First Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "3ac68afc-c60-48d3-4f8-fbd91aa97f63",
-    userName: "Second Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "58694a0f-3da-471fbd96-145571e29d72",
-    userName: "Third Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "bd7acbea-c1b1-46c-aed5-3ad53abb28ba",
-    userName: "First Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8fbd91aa97f63",
-    userName: "Second Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd9-145571e29d72",
-    userName: "Third Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "bd7abea-c1b1-46c-aed5-3ad53abb28ba",
-    userName: "First Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "3ac68afc-c05-48d3-a4f8fbd91aa97f63",
-    userName: "Second Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "5694a0f-3da1-471f-bd9-145571e29d72",
-    userName: "Third Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
 ];
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChatList">;
 
-type ItemProps = {
-  userName: string;
-  uri: string;
-  lastMessage: string;
-  navigation: Props;
+type ChatRoom = {
+  chatId: string;
+  name: string;
+  profilePictureUrl: string;
+  senderProfileId: string;
+  recipientProfileId: string;
 };
 
-export default function ChatListScreen({ navigation }: Props) {
+export default function ChatListScreen({ route, navigation }: Props) {
+  const [chatRoomData, setChatRoomData] = useState<ChatRoom[]>([]);
+  const [isLoading, setLoading] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
   const [chats, setChats] = useState(DATA);
+
 
   const filterChats = () => {
     if (!searchPhrase.trim()) {
@@ -120,7 +64,31 @@ export default function ChatListScreen({ navigation }: Props) {
     filterChats();
   }, [searchPhrase]);
 
-  return (
+  useEffect(() => {
+    const getChatRoomData = async () => {
+      setLoading(true);
+      const token = await SecureStore.getItemAsync("token");
+
+      axios(`${config.API_URL}/chatRooms`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          setChatRoomData(response.data);
+        })
+        .catch((error) => {
+          console.log("error", error.message);
+        })
+        .finally(() => setLoading(false));
+    };
+    getChatRoomData();
+  }, []);
+
+  return isLoading ? (
+    <ActivityIndicator style={styles.loading} />
+  ) : (
     <View style={styles.container}>
       <SafeAreaView>
         <Text style={styles.headline}>Chat</Text>
@@ -132,24 +100,25 @@ export default function ChatListScreen({ navigation }: Props) {
         />
       </SafeAreaView>
       <FlatList
-        data={chats}
+        data={chatRoomData}
+      
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
           <TouchableHighlight
             underlayColor="transparent"
-            onPress={() => navigation.push("Chat", { profileId: item.id })}
+            onPress={() => navigation.push("Chat", { chatId: item.chatId, name: item.name, profilePictureUrl: item.profilePictureUrl, senderProfileId: item.senderProfileId, recipientProfileId: item.recipientProfileId })}
           >
             <View style={styles.item}>
               <Image
                 source={{
-                  uri: item.uri,
+                  uri: item.profilePictureUrl,
                 }}
                 style={styles.profileImg}
               />
               <View style={styles.chatText}>
-                <Text style={styles.userName}>{item.userName}</Text>
+                <Text style={styles.userName}>{item.name}</Text>
                 <Text style={styles.lastMessage} numberOfLines={1}>
-                  {item.lastMessage}
+                  This is hard coded
                 </Text>
               </View>
             </View>
@@ -196,5 +165,9 @@ const styles = StyleSheet.create({
   lastMessage: {
     fontSize: 14,
     color: AppColors.GREY_500,
+  },
+  loading: {
+    flex: 1,
+    backgroundColor: "white",
   },
 });

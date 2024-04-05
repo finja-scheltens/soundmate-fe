@@ -66,10 +66,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // TODO: we need the name here
 type HeaderProps = {
-  profileId: string;
+  chatId: string;
+  name: string;
+  profilePictureUrl: string;
 };
 
-function Header({ profileId }: HeaderProps) {
+function Header({ chatId, name, profilePictureUrl }: HeaderProps) {
   return (
     <TouchableHighlight
       style={{
@@ -87,7 +89,7 @@ function Header({ profileId }: HeaderProps) {
         <Image
           style={{ width: 35, height: 35, borderRadius: 50 }}
           source={{
-            uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            uri: profilePictureUrl,
           }}
         />
         <Text
@@ -96,7 +98,7 @@ function Header({ profileId }: HeaderProps) {
             fontSize: 16,
           }}
         >
-          Name
+          {name}
         </Text>
       </View>
     </TouchableHighlight>
@@ -137,7 +139,7 @@ function RootNavigator({ newChatMessage }: { newChatMessage: boolean }) {
         name="Chat"
         component={ChatScreen}
         options={({ route, navigation }) => ({
-          headerTitle: props => <Header profileId={route.params.profileId} />,
+          headerTitle: props => <Header chatId={route.params.chatId} name={route.params.name} profilePictureUrl={route.params.profilePictureUrl} />,
           headerBackTitleVisible: false,
           headerTransparent: true,
           headerBlurEffect: "light",
