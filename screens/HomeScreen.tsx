@@ -22,6 +22,12 @@ import { Text } from "../components/Themed";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
 import SecondaryButton from "../components/SecondaryButton";
+import { useDispatch } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
+import {
+  connectWebSocket,
+  setChatRooms,
+} from "../store//actions/webSocketClientActions";
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -33,6 +39,9 @@ export default function HomeScreen({ navigation }: HomeProps) {
   const [topArtists, setTopArtists] = useState<ArtistData[]>([]);
   const [topGenres, setTopGenres] = useState<GenreData[]>([]);
   const [isLoading, setLoading] = useState(false);
+  const [profileId, setProfileId] = useState("");
+
+    const dispatch = useDispatch();
 
   useEffect(() => {
     const getProfileData = async () => {
@@ -49,6 +58,8 @@ export default function HomeScreen({ navigation }: HomeProps) {
           setUsersData(response.data);
           setTopArtists(response.data.topArtists);
           setTopGenres(response.data.topGenres);
+          setProfileId(response.data.profileId);
+          
         })
         .catch(error => {
           console.log("error", error.message);
@@ -56,7 +67,14 @@ export default function HomeScreen({ navigation }: HomeProps) {
         .finally(() => setLoading(false));
     };
     getProfileData();
+    
   }, []);
+
+   useEffect(() => {
+     if (profileId) {
+       dispatch(connectWebSocket(profileId, dispatch));
+     }
+   }, [profileId, dispatch]);
 
   async function logout() {
     await SecureStore.deleteItemAsync("token");

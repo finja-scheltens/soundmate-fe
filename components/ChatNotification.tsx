@@ -10,8 +10,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 import { AppColors } from "../constants/AppColors";
+import { ChatRoom } from "../types";
+import { RootState } from "../store/store";
+import { useSelector } from "react-redux";
 
 interface ChatNotificationProps {
   messageProperties: {
@@ -29,7 +31,9 @@ export default function ChatNotification({
 }: ChatNotificationProps) {
   const pan = useRef(new Animated.ValueXY({ x: 0, y: -500 })).current;
   const navigation = useNavigation();
-
+  const chatRooms: ChatRoom[] = useSelector(
+    (state: RootState) => state.WebSocketClient.chatRooms
+  );
   useEffect(() => {
     Animated.timing(pan, {
       toValue: { x: 0, y: 0 },
@@ -58,9 +62,16 @@ export default function ChatNotification({
     transform: pan.getTranslateTransform(),
   };
 
-  const navigateToChat = () => {
+  const navigateToChat = (profileId: string, userName: string) => {
+    const matchingChatRoom = chatRooms.find(
+      (chatRoom) => chatRoom.recipientProfileId.toString() === profileId
+    );
     navigation.navigate("Chat", {
-      profileId: messageProperties.profileId,
+      chatId: matchingChatRoom!.chatId,
+      name: userName,
+      profilePictureUrl: matchingChatRoom!.profilePictureUrl,
+      senderProfileId: matchingChatRoom!.senderProfileId,
+      recipientProfileId: matchingChatRoom!.recipientProfileId,
     });
     onDismiss();
   };
@@ -68,7 +79,15 @@ export default function ChatNotification({
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View style={[styles.notificationContainer, animatedStyle]}>
-        <TouchableOpacity style={styles.touchableArea} onPress={navigateToChat}>
+        <TouchableOpacity
+          style={styles.touchableArea}
+          onPress={() =>
+            navigateToChat(
+              messageProperties.profileId,
+              messageProperties.userName
+            )
+          }
+        >
           <Image
             source={{ uri: messageProperties.profileImage }}
             style={styles.userImage}

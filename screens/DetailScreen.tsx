@@ -24,6 +24,9 @@ import { Text } from "../components/Themed";
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
 import Badge from "../components/Badge";
+import store, { RootState } from "../store/store";
+import { ChatRoom, ChatIdMessages } from "../types";
+import { useSelector, useDispatch } from "react-redux";
 
 const user = require("../data/user.json");
 
@@ -42,6 +45,28 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
   const [topArtists, setTopArtists] = useState<ArtistData[]>([]);
   const [topGenres, setTopGenres] = useState<GenreData[]>([]);
   const [isLoading, setLoading] = useState(false);
+  const chatRooms: ChatRoom[] = useSelector(
+    (state: RootState) => state.WebSocketClient.chatRooms
+  );
+  const chatIdMessages: ChatIdMessages = useSelector(
+    (state: RootState) => state.WebSocketClient.messages
+  );
+
+  const getChatRoom = (profileId: string, chatRooms: ChatRoom[]) => {
+     const chatRoom = chatRooms.find(
+       (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+     );
+     return chatRoom;
+  }
+
+  const chattedBefore = (profileId: string, chatRooms: ChatRoom[]) => {
+    const chatRoom = chatRooms.find(
+      (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+    );
+    if ((chatIdMessages.chatIdMessages as any)[chatRoom!.chatId].length > 0) {
+      return chatRoom
+    }
+  };
 
   const { profileId } = route.params;
 
@@ -56,18 +81,29 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then(response => {
+        .then((response) => {
           setMatchData(response.data);
           setTopArtists(response.data.topArtists);
           setTopGenres(response.data.topGenres);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log("error", error.message);
         })
         .finally(() => setLoading(false));
     };
     getMatchData();
   }, []);
+
+  const navigateToChat = (chatRoom: ChatRoom) => {
+    const chatParams = {
+      chatId: chatRoom.chatId,
+      name: chatRoom.name,
+      profilePictureUrl: chatRoom.profilePictureUrl,
+      senderProfileId: chatRoom.senderProfileId,
+      recipientProfileId: chatRoom.recipientProfileId,
+    };
+    navigation.push("Chat", chatParams);
+  };
 
   return isLoading ? (
     <ActivityIndicator style={styles.loading} />
@@ -147,10 +183,10 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
         </View>
       </ScrollView>
       <PrimaryButton
-        title="Sag Hallo"
+        title={chattedBefore(profileId, chatRooms) ? "Nachricht Schreiben" : "Sag Hallo"}
         style={styles.chatButton}
         onPress={() => {
-          navigation.push("Chat", { chatId: profileId,name: matchData.name, profilePictureUrl: matchData.profilePictureUrl });
+          navigateToChat(getChatRoom(profileId, chatRooms)!);
         }}
       />
     </View>

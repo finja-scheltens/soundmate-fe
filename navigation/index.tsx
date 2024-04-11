@@ -1,8 +1,3 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { ReactNode } from "react";
 
@@ -20,12 +15,8 @@ import {
   Text,
   TouchableHighlight,
 } from "react-native";
-
 import { AppColors } from "../constants/AppColors";
-
 import useColorScheme from "../hooks/useColorScheme";
-// import ModalScreen from '../screens/ModalScreen';
-// import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from "../screens/HomeScreen";
 import MatchesScreen from "../screens/MatchesScreen";
 import { RootStackParamList, RootTabParamList } from "../types";
@@ -37,14 +28,14 @@ import ChatListScreen from "../screens/ChatListScreen";
 import ChatScreen from "../screens/ChatScreen";
 
 import Indicator from "../components/Indicator";
+import { RootState } from "../store/store";
+import { useSelector } from "react-redux";
 
 export default function Navigation({
   colorScheme,
-  newChatMessage,
   children,
 }: {
   colorScheme: ColorSchemeName;
-  newChatMessage: boolean;
   children: ReactNode;
 }) {
   return (
@@ -52,7 +43,7 @@ export default function Navigation({
       linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
-      <RootNavigator newChatMessage={newChatMessage} />
+      <RootNavigator />
       {children}
     </NavigationContainer>
   );
@@ -64,14 +55,13 @@ export default function Navigation({
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// TODO: we need the name here
 type HeaderProps = {
   chatId: string;
   name: string;
   profilePictureUrl: string;
 };
 
-function Header({ chatId, name, profilePictureUrl }: HeaderProps) {
+function Header({ name, profilePictureUrl }: HeaderProps) {
   return (
     <TouchableHighlight
       style={{
@@ -105,7 +95,10 @@ function Header({ chatId, name, profilePictureUrl }: HeaderProps) {
   );
 }
 
-function RootNavigator({ newChatMessage }: { newChatMessage: boolean }) {
+function RootNavigator() {
+  const newMessage = useSelector(
+    (state: RootState) => state.WebSocketClient.newChatMesssage
+  );
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -120,7 +113,11 @@ function RootNavigator({ newChatMessage }: { newChatMessage: boolean }) {
           animation: "fade",
         }}
       >
-        {() => <BottomTabNavigator newChatMessage={newChatMessage} />}
+        {() => (
+          <BottomTabNavigator
+            newChatMessage={Object.keys(newMessage).length !== 0}
+          />
+        )}
       </Stack.Screen>
       <Stack.Screen
         name="UserInfo"
@@ -139,7 +136,13 @@ function RootNavigator({ newChatMessage }: { newChatMessage: boolean }) {
         name="Chat"
         component={ChatScreen}
         options={({ route, navigation }) => ({
-          headerTitle: props => <Header chatId={route.params.chatId} name={route.params.name} profilePictureUrl={route.params.profilePictureUrl} />,
+          headerTitle: (props) => (
+            <Header
+              chatId={route.params.chatId}
+              name={route.params.name}
+              profilePictureUrl={route.params.profilePictureUrl}
+            />
+          ),
           headerBackTitleVisible: false,
           headerTransparent: true,
           headerBlurEffect: "light",

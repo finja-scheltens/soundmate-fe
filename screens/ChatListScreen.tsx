@@ -7,88 +7,62 @@ import {
   Text,
   Image,
   TouchableHighlight,
-  ActivityIndicator,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import * as SecureStore from "expo-secure-store";
-import axios from "axios";
-import config from "../constants/Config";
-import { WebSocketClient } from "../hooks/WebSocketClient";
-
+import { RootState } from "../store/store";
+import { useSelector } from "react-redux";
+import { ChatIdMessages, ChatRoom } from "../types";
 import { RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
-
 import SearchBar from "../components/SearchBar";
-
-const DATA = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb8ba",
-    userName: "First Item",
-    lastMessage: "Hallo i bims",
-    uri: "https://images.unsplash.com/photo-1682687221175-fd40bbafe6ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-];
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChatList">;
 
-type ChatRoom = {
-  chatId: string;
-  name: string;
-  profilePictureUrl: string;
-  senderProfileId: string;
-  recipientProfileId: string;
-};
-
-export default function ChatListScreen({ route, navigation }: Props) {
-  const [chatRoomData, setChatRoomData] = useState<ChatRoom[]>([]);
-  const [isLoading, setLoading] = useState(false);
+export default function ChatListScreen({ navigation }: Props) {
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
-  const [chats, setChats] = useState(DATA);
+  const [chats, setChats] = useState<ChatRoom[]>([]);
+  const chatRooms: ChatRoom[] = useSelector(
+    (state: RootState) => state.WebSocketClient.chatRooms
+  );
+  const chatIdMessages: ChatIdMessages = useSelector(
+    (state: RootState) => state.WebSocketClient.messages
+  );
 
+  const getLastMessage = (chatId: string) => {
+    return (chatIdMessages.chatIdMessages as any)[chatId][0].text ;
+  };
 
-  const filterChats = () => {
+  const chatRoomsWithText = chatRooms.filter(
+    (item) => (chatIdMessages.chatIdMessages as any)[item.chatId].length > 0
+  );
+
+   const filterChats = () => {
     if (!searchPhrase.trim()) {
-      setChats(DATA);
+      setChats(chatRoomsWithText);
     } else {
-      const filteredChats = DATA.filter(item =>
-        item.userName.toLowerCase().includes(searchPhrase.toLowerCase())
-      );
+       const filteredChats = chatRoomsWithText.filter((item) => {
+         const nameMatch = item.name
+           .toLowerCase()
+           .includes(searchPhrase.toLowerCase());
+         const lastMessageText =
+           (chatIdMessages.chatIdMessages as any)[item.chatId]?.[0]?.text || "";
+         const messageMatch = lastMessageText
+           .toLowerCase()
+           .includes(searchPhrase.toLowerCase());
+         return nameMatch || messageMatch; 
+       });
+
       setChats(filteredChats);
-    }
+     }
   };
 
   useEffect(() => {
     filterChats();
-  }, [searchPhrase]);
+  }, [searchPhrase, chatRooms, JSON.stringify(chatIdMessages.chatIdMessages)]); 
 
-  useEffect(() => {
-    const getChatRoomData = async () => {
-      setLoading(true);
-      const token = await SecureStore.getItemAsync("token");
-
-      axios(`${config.API_URL}/chatRooms`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          setChatRoomData(response.data);
-        })
-        .catch((error) => {
-          console.log("error", error.message);
-        })
-        .finally(() => setLoading(false));
-    };
-    getChatRoomData();
-  }, []);
-
-  return isLoading ? (
-    <ActivityIndicator style={styles.loading} />
-  ) : (
+  return (
     <View style={styles.container}>
       <SafeAreaView>
         <Text style={styles.headline}>Chat</Text>
@@ -100,13 +74,20 @@ export default function ChatListScreen({ route, navigation }: Props) {
         />
       </SafeAreaView>
       <FlatList
-        data={chatRoomData}
-      
+        data={chats}
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
           <TouchableHighlight
             underlayColor="transparent"
-            onPress={() => navigation.push("Chat", { chatId: item.chatId, name: item.name, profilePictureUrl: item.profilePictureUrl, senderProfileId: item.senderProfileId, recipientProfileId: item.recipientProfileId })}
+            onPress={() =>
+              navigation.push("Chat", {
+                chatId: item.chatId,
+                name: item.name,
+                profilePictureUrl: item.profilePictureUrl,
+                senderProfileId: item.senderProfileId,
+                recipientProfileId: item.recipientProfileId,
+              })
+            }
           >
             <View style={styles.item}>
               <Image
@@ -118,7 +99,7 @@ export default function ChatListScreen({ route, navigation }: Props) {
               <View style={styles.chatText}>
                 <Text style={styles.userName}>{item.name}</Text>
                 <Text style={styles.lastMessage} numberOfLines={1}>
-                  This is hard coded
+                  {getLastMessage(item.chatId)}
                 </Text>
               </View>
             </View>
