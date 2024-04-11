@@ -23,6 +23,7 @@ import { RootStackParamList, RootTabParamList } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
+import MatchingInfoScreen from "../screens/MatchingInfoScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
 import ChatListScreen from "../screens/ChatListScreen";
 import ChatScreen from "../screens/ChatScreen";
@@ -133,6 +134,11 @@ function RootNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="MatchingInfo"
+        component={MatchingInfoScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name="Chat"
         component={ChatScreen}
         options={({ route, navigation }) => ({
@@ -151,6 +157,7 @@ function RootNavigator() {
     </Stack.Navigator>
   );
 }
+
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
@@ -194,19 +201,6 @@ function BottomTabNavigator({ newChatMessage }: { newChatMessage: boolean }) {
           ),
         }}
       />
-      {/* <BottomTab.Screen
-          name="AppInfo"
-          component={AppInfoScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TabBarIcon
-                name={
-                  focused ? "information-circle" : "information-circle-outline"
-                }
-              />
-            ),
-          }}
-        /> */}
       <BottomTab.Screen
         name="ChatList"
         component={ChatListScreen}

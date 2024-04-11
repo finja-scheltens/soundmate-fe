@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { ImageBackground, Image, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useDispatch } from "react-redux";
 import * as SecureStore from "expo-secure-store";
 import {
   makeRedirectUri,
@@ -11,7 +10,7 @@ import {
 import * as SplashScreen from "expo-splash-screen";
 import axios, { AxiosResponse } from "axios";
 
-import { RootStackParamList, UserInfoParams } from "../types";
+import { RootStackParamList } from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
 
@@ -38,7 +37,6 @@ async function saveToken(value: string) {
 type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export default function LoginScreen({ navigation }: LoginProps) {
-  const dispatch = useDispatch();
   const [spotifyAuthCode, setSpotifyAuthCode] = useState("");
   const [backendJwtToken, setBackendJwtToken] = useState("");
   const [appIsReady, setAppIsReady] = useState(false);

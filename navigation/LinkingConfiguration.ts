@@ -30,6 +30,11 @@ const linking: LinkingOptions<RootStackParamList> = {
               DetailScreen: "detail",
             },
           },
+          MatchingInfo: {
+            screens: {
+              MatchingInfoScreen: "matchinginfo",
+            },
+          },
           Home: {
             screens: {
               HomeScreen: "one",

@@ -6,29 +6,37 @@ import {
   ScrollView,
   ImageBackground,
   Pressable,
+  Image,
   SafeAreaView,
   Linking,
   ActivityIndicator,
+  TouchableOpacity,
+  Platform,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { useScrollToTop } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
-import { RootStackParamList, UserData, ArtistData, GenreData } from "../types";
+import {
+  RootStackParamList,
+  UserData,
+  ArtistData,
+  GenreData,
+  GenderType,
+} from "../types";
 import { AppColors } from "../constants/AppColors";
 import config from "../constants/Config";
+import { RootState } from "../store/store";
 
 import { Text } from "../components/Themed";
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
 import Badge from "../components/Badge";
-import store, { RootState } from "../store/store";
 import { ChatRoom, ChatIdMessages } from "../types";
-import { useSelector, useDispatch } from "react-redux";
-
-const user = require("../data/user.json");
 
 type DetailProps = {
   navigation: NativeStackScreenProps<
@@ -38,36 +46,29 @@ type DetailProps = {
   route: NativeStackScreenProps<RootStackParamList, "Detail">["route"];
 };
 
+
+type Factors = {
+  novelFactor: number;
+  mainstreamFactor: number;
+  diverseFactor: number;
+};
+
 export default function DetailScreen({ route, navigation }: DetailProps) {
   const ref = React.useRef(null);
   useScrollToTop(ref);
   const [matchData, setMatchData] = useState<UserData>({} as UserData);
   const [topArtists, setTopArtists] = useState<ArtistData[]>([]);
   const [topGenres, setTopGenres] = useState<GenreData[]>([]);
+  const [matchingPercentage, setMatchingPercentage] = useState(0);
   const [isLoading, setLoading] = useState(false);
+
+  const usersData = useSelector((state: RootState) => state.user.usersData);
   const chatRooms: ChatRoom[] = useSelector(
     (state: RootState) => state.WebSocketClient.chatRooms
   );
   const chatIdMessages: ChatIdMessages = useSelector(
     (state: RootState) => state.WebSocketClient.messages
   );
-
-  const getChatRoom = (profileId: string, chatRooms: ChatRoom[]) => {
-     const chatRoom = chatRooms.find(
-       (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
-     );
-     return chatRoom;
-  }
-
-  const chattedBefore = (profileId: string, chatRooms: ChatRoom[]) => {
-    const chatRoom = chatRooms.find(
-      (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
-    );
-    if ((chatIdMessages.chatIdMessages as any)[chatRoom!.chatId].length > 0) {
-      return chatRoom
-    }
-  };
-
   const { profileId } = route.params;
 
   useEffect(() => {
@@ -94,6 +95,38 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
     getMatchData();
   }, []);
 
+  useEffect(() => {
+    calculateMatchingFactor();
+  }, [matchData]);
+
+  const calculateMatchingFactor = () => {
+    const userFactors: Factors = {
+      novelFactor: usersData.novelFactor,
+      mainstreamFactor: usersData.mainstreamFactor,
+      diverseFactor: usersData.diverseFactor,
+    };
+
+    const matchFactors: Factors = {
+      novelFactor: matchData.novelFactor,
+      mainstreamFactor: matchData.mainstreamFactor,
+      diverseFactor: matchData.diverseFactor,
+    };
+
+    // calculate euclidean distance between two points in 3D space
+    const squaredDistance = Object.keys(userFactors).reduce((acc, key) => {
+      const factorKey = key as keyof Factors;
+      return (
+        acc + Math.pow(userFactors[factorKey] - matchFactors[factorKey], 2)
+      );
+    }, 0);
+
+    // normalize distance with maximum possible distance and calculate matching percentage for specific match
+    const distanceNoramalized = Math.sqrt(squaredDistance) / Math.sqrt(3);
+    const matchingPercentage = Math.round((1 - distanceNoramalized) * 100);
+
+    setMatchingPercentage(matchingPercentage);
+  };
+
   const navigateToChat = (chatRoom: ChatRoom) => {
     const chatParams = {
       chatId: chatRoom.chatId,
@@ -103,6 +136,23 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
       recipientProfileId: chatRoom.recipientProfileId,
     };
     navigation.push("Chat", chatParams);
+  };
+
+
+  const getChatRoom = (profileId: string, chatRooms: ChatRoom[]) => {
+     const chatRoom = chatRooms.find(
+       (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+     );
+     return chatRoom;
+  }
+
+  const chattedBefore = (profileId: string, chatRooms: ChatRoom[]) => {
+    const chatRoom = chatRooms.find(
+      (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+    );
+    if ((chatIdMessages.chatIdMessages as any)[chatRoom!.chatId].length > 0) {
+      return chatRoom
+    }
   };
 
   return isLoading ? (
@@ -144,17 +194,48 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
             <Ionicons
               name="logo-instagram"
               size={18}
-              color={AppColors.GREY_500}
+              color={AppColors.GREY_700}
             />
-            <Text style={styles.eMail}>{matchData.contactInfo}</Text>
+            <Text style={styles.infoText}>{matchData.contactInfo}</Text>
           </View>
-          <View style={styles.subInfoBio}>
-            <Ionicons
-              name="chatbubble-outline"
+          <View style={styles.genderInfo}>
+            <FontAwesome6
+              name="person-half-dress"
               size={18}
-              color={AppColors.GREY_500}
+              color={AppColors.GREY_700}
             />
-            <Text style={styles.subTextBio}>{matchData.bio}</Text>
+            <Text style={styles.infoText}>
+              {
+                GenderType[
+                  matchData.genderType as string as keyof typeof GenderType
+                ]
+              }
+            </Text>
+          </View>
+          <Text style={styles.subTextBio}>{matchData.bio}</Text>
+          <View style={styles.matchingInfo}>
+            <View style={styles.matchingTextContainer}>
+              <Text style={styles.matchingText}>
+                Du und {matchData.name} habt ein {matchingPercentage}% Match
+              </Text>
+              <TouchableOpacity
+                hitSlop={15}
+                style={styles.moreInformation}
+                onPress={() =>
+                  navigation.push("MatchingInfo", {
+                    matchData,
+                    matchingPercentage,
+                  })
+                }
+              >
+                <Text style={{ color: "white" }}>Mehr Informationen</Text>
+                <Entypo name="chevron-small-right" size={22} color="white" />
+              </TouchableOpacity>
+            </View>
+            <Image
+              source={require("../assets/images/match-image.png")}
+              style={styles.matchingImage}
+            />
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.genreHeadline}>Top Genres</Text>
@@ -183,7 +264,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
         </View>
       </ScrollView>
       <PrimaryButton
-        title={chattedBefore(profileId, chatRooms) ? "Nachricht Schreiben" : "Sag Hallo"}
+        title={chattedBefore(profileId, chatRooms) ? "Nachricht schreiben" : "Sag Hallo"}
         style={styles.chatButton}
         onPress={() => {
           navigateToChat(getChatRoom(profileId, chatRooms)!);
@@ -227,7 +308,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 20,
-    marginTop: 10,
+    marginTop: Platform.OS === "android" ? 40 : 10,
     borderColor: AppColors.GREY_300,
     borderWidth: 0.5,
   },
@@ -240,32 +321,62 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: AppColors.GREY_900,
     marginTop: 25,
-    marginBottom: 6,
+    marginBottom: 12,
   },
   instaInfo: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
   },
-  subInfoBio: {
+  genderInfo: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 6,
-    marginRight: 20,
+    marginTop: 8,
+    marginLeft: 3,
+    gap: 4,
   },
-  eMail: {
+  infoText: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
-    color: AppColors.GREY_500,
+    color: AppColors.GREY_700,
     marginLeft: 6,
   },
   subTextBio: {
     fontFamily: "Inter-Regular",
     fontSize: 14,
-    color: AppColors.GREY_500,
-    marginLeft: 6,
-    lineHeight: 18,
+    color: AppColors.GREY_700,
+    lineHeight: 20,
+    marginVertical: 24,
+    marginLeft: 3,
+  },
+  matchingInfo: {
+    marginTop: 8,
+    backgroundColor: AppColors.SECONDARY,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 40,
+  },
+  matchingTextContainer: {
+    flex: 1,
+    gap: 16,
+  },
+  matchingText: {
+    fontSize: 16,
+    fontWeight: "600",
+    lineHeight: 22,
+    color: "white",
+  },
+  matchingImage: {
+    height: 100,
+    width: 100,
+    resizeMode: "contain",
+  },
+  moreInformation: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   infoContainer: {
     backgroundColor: "white",
@@ -281,6 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     flexWrap: "wrap",
+    gap: 10,
   },
   genreBadge: {
     marginRight: 10,
@@ -293,8 +405,15 @@ const styles = StyleSheet.create({
   },
   chatButton: {
     position: "absolute",
-    bottom: 50,
+    bottom: 45,
     alignSelf: "center",
     width: "90%",
+    shadowColor: AppColors.GREY_900,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });

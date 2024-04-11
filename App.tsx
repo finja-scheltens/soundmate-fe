@@ -12,7 +12,7 @@ import ChatNotification from "./components/ChatNotification";
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  
+
   // Needed for StompJS to work
   const TextEncodingPolyfill = require("text-encoding");
   Object.assign(global, {

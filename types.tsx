@@ -17,13 +17,32 @@ declare global {
   }
 }
 
+export enum GenderType {
+  MALE = "Männlich",
+  FEMALE = "Weiblich",
+  DIVERSE = "Divers",
+}
+
 export type UserData = {
   profilePictureUrl: string;
   name: string;
   age: number;
+  genderType: GenderType;
   contactInfo: string;
   bio: string;
+  topGenres: [];
+  topArtists: [];
+  novelFactor: number;
+  mainstreamFactor: number;
+  diverseFactor: number;
 };
+
+export type UserLocation = {
+  location: {
+    latitude: number;
+    longitude: number;
+  } | null;
+}
 
 export type ArtistData = {
   name: string;
@@ -42,6 +61,11 @@ export type DetailParams = {
   profileId: string;
 };
 
+export type MatchingInfoParams = {
+  matchData: UserData;
+  matchingPercentage: number;
+};
+
 export type ChatParams = {
   chatId: string;
   name: string;
@@ -56,6 +80,7 @@ export type RootStackParamList = {
   Home: undefined;
   Matches: undefined;
   Detail: DetailParams;
+  MatchingInfo: MatchingInfoParams;
   ChatList: undefined;
   Chat: ChatParams;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
@@ -70,6 +95,7 @@ export type RootTabParamList = {
   Home: undefined;
   Matches: undefined;
   Detail: undefined;
+  MatchingInfo: undefined;
   AppInfo: undefined;
   ChatList: undefined;
   Chat: ChatParams;

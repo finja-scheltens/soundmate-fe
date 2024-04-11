@@ -18,11 +18,10 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: 11,
     paddingHorizontal: 26,
     borderRadius: 8,
-    // elevation: 3,
-    borderColor: AppColors.GREY_500,
+    borderColor: AppColors.PRIMARY,
     borderWidth: 1,
     backgroundColor: "white",
   },
@@ -30,7 +29,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 21,
     fontWeight: "bold",
-    color: AppColors.GREY_900,
+    color: AppColors.PRIMARY,
     fontFamily: "Inter-Medium",
   },
 });
