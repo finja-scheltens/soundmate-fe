@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from "react-native";
-import { AppColors } from "../../constants/AppColors";
+import { AppColors } from "../constants/AppColors";
 
 type ListItemProps = {
   imageSource: ImageSourcePropType;

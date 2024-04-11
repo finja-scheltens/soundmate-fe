@@ -7,7 +7,7 @@ import Navigation from "./navigation";
 import { Provider } from "react-redux";
 import { useSelector } from "react-redux";
 import store, { RootState } from "./store/store";
-import ChatNotification from "./components/chat/ChatNotification";
+import ChatNotification from "./components/ChatNotification";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();

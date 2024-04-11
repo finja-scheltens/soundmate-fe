@@ -33,7 +33,7 @@ import config from "../../constants/Config";
 import { RootState } from "../../store/store";
 
 import { Text } from "../../components/Themed";
-import ListItem from "../../components/chat/ListItem";
+import ListItem from "../../components/ListItem";
 import PrimaryButton from "../../components/PrimaryButton";
 import Badge from "../../components/Badge";
 import { ChatRoom, ChatIdMessages } from "../../types";

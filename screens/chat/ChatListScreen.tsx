@@ -16,6 +16,7 @@ import { ChatIdMessages, ChatRoom } from "../../types";
 import { RootStackParamList } from "../../types";
 import { AppColors } from "../../constants/AppColors";
 import SearchBar from "../../components/SearchBar";
+import Indicator from "../../components/Indicator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChatList">;
 
@@ -60,7 +61,7 @@ export default function ChatListScreen({ navigation }: Props) {
 
   useEffect(() => {
     filterChats();
-  }, [searchPhrase, chatRooms, JSON.stringify(chatIdMessages.chatIdMessages)]);
+  }, [searchPhrase, JSON.stringify(chatIdMessages.chatIdMessages)]);
 
   return (
     <View style={styles.container}>
@@ -102,6 +103,7 @@ export default function ChatListScreen({ navigation }: Props) {
                   {getLastMessage(item.chatId)}
                 </Text>
               </View>
+              <Indicator />
             </View>
           </TouchableHighlight>
         )}

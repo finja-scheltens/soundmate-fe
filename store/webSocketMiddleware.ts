@@ -64,6 +64,12 @@ const webSocketMiddleware: Middleware =
           action.payload.senderProfileId,
           action.payload.recipientProfileId
         );
+        const sendAllMessages = store.getState().WebSocketClient.messages;
+        const sendUpdatedMessages = sendAllMessages.chatIdMessages;
+        store.dispatch({
+          type: "SET_MESSAGES_FOR_CHATROOM",
+          payload: sendUpdatedMessages,
+        });
         break;
 
       case RECEIVE_MESSAGE:

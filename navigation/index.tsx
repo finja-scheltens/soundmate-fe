@@ -210,7 +210,11 @@ function BottomTabNavigator({ newChatMessage }: { newChatMessage: boolean }) {
                 <TabBarIcon
                   name={focused ? "chatbubbles" : "chatbubbles-outline"}
                 />
-                {newChatMessage && <Indicator />}
+                {newChatMessage && (
+                  <Indicator
+                    style={{ position: "absolute", top: -3, right: -2 }}
+                  />
+                )}
               </View>
             );
           },

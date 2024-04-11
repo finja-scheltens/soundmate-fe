@@ -10,9 +10,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { AppColors } from "../../constants/AppColors";
-import { ChatRoom } from "../../types";
-import { RootState } from "../../store/store";
+import { AppColors } from "../constants/AppColors";
+import { ChatRoom } from "../types";
+import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
 
 type ChatNotificationProps = {

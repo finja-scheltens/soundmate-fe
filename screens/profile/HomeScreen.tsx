@@ -34,7 +34,7 @@ import calculateDistance from "../../utils/utils";
 
 import { Text } from "../../components/Themed";
 import Badge from "../../components/Badge";
-import ListItem from "../../components/chat/ListItem";
+import ListItem from "../../components/ListItem";
 import SecondaryButton from "../../components/SecondaryButton";
 import { connectWebSocket } from "../../store/actions/webSocketClientActions";
 

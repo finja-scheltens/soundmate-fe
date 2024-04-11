@@ -1,10 +1,14 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ViewStyle } from "react-native";
 import { AppColors } from "../constants/AppColors";
 
-export default function Indicator() {
+type IndicatorProps = {
+  style?: ViewStyle;
+};
+
+export default function Indicator({ style }: IndicatorProps) {
   return (
-    <View style={styles.outerIndicator}>
+    <View style={[style, styles.outerIndicator]}>
       <View style={styles.innerIndicator} />
     </View>
   );
@@ -12,9 +16,6 @@ export default function Indicator() {
 
 const styles = StyleSheet.create({
   outerIndicator: {
-    position: "absolute",
-    top: -3,
-    right: -2,
     width: 14,
     height: 14,
     borderRadius: 50,
