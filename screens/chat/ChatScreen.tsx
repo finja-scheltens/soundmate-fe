@@ -4,9 +4,9 @@ import { StyleSheet } from "react-native";
 import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { RootStackParamList } from "../types";
+import { RootStackParamList } from "../../types";
 import { useSelector } from "react-redux";
-import store, { RootState } from "../store/store";
+import store, { RootState } from "../../store/store";
 
 type ChatProps = {
   route: NativeStackScreenProps<RootStackParamList, "Chat">["route"];
@@ -17,16 +17,12 @@ export default function ChatScreen({ route }: ChatProps) {
     (state: RootState) => state.WebSocketClient.messages as any
   );
   const messages = allMessages.chatIdMessages[route.params.chatId];
-  const {
-    chatId,
-    senderProfileId,
-    recipientProfileId,
-  } = route.params;
+  const { chatId, senderProfileId, recipientProfileId } = route.params;
 
   const onSend = (newMessages: IMessage[]) => {
     console.log(newMessages[0]._id);
     const chatMessage: IMessage = {
-      _id : newMessages[0]._id ,
+      _id: newMessages[0]._id,
       text: newMessages[0].text,
       createdAt: new Date(),
       user: {
@@ -56,7 +52,7 @@ export default function ChatScreen({ route }: ChatProps) {
     <SafeAreaView style={styles.container}>
       <GiftedChat
         messages={messages}
-        onSend={(newMessages) => onSend(newMessages)}
+        onSend={newMessages => onSend(newMessages)}
         user={user}
         renderUsernameOnMessage
         placeholder="Nachricht schreiben..."

@@ -55,11 +55,6 @@ const linking: LinkingOptions<RootStackParamList> = {
               ChatScreen: "chat",
             },
           },
-          // AppInfo: {
-          //   screens: {
-          //     AppInfoScreen: "three",
-          //   },
-          // },
         },
       },
       // Modal: 'modal',

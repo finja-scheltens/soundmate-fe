@@ -27,14 +27,14 @@ import {
   GenreData,
   RootStackParamList,
   UserLocation,
-} from "../types";
-import { AppColors } from "../constants/AppColors";
-import config from "../constants/Config";
-import { RootState } from "../store/store";
-import calculateDistance from "../utils";
+} from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import config from "../../constants/Config";
+import { RootState } from "../../store/store";
+import calculateDistance from "../../utils";
 
-import MatchItem from "../components/MatchItem";
-import FilterModal from "../components/FilterModal";
+import MatchItem from "../../components/matches/MatchItem";
+import FilterModal from "../../components/matches/FilterModal";
 
 const numColumns = 2;
 type Props = NativeStackScreenProps<RootStackParamList, "Matches">;
@@ -319,7 +319,7 @@ export default function MatchesScreen({ navigation }: Props) {
                     imageSource={
                       item.profilePictureUrl
                         ? { uri: item.profilePictureUrl }
-                        : require("../assets/images/avatar2.png")
+                        : require("../../assets/images/avatar2.png")
                     }
                     style={item.empty ? styles.itemInvisible : styles.matchItem}
                   />
@@ -341,7 +341,7 @@ export default function MatchesScreen({ navigation }: Props) {
               }
             >
               <Image
-                source={require("../assets/images/empty-state.png")}
+                source={require("../../assets/images/empty-state.png")}
                 style={styles.noMatchesImage}
               />
               <Text style={styles.noMatchesHeadline}>Keine Matches</Text>

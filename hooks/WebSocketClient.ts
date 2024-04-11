@@ -19,7 +19,7 @@ class WebSocketClient {
 
   connect() {
     this.client = new Client({
-      brokerURL: "ws://192.168.178.105:8080/ws",
+      brokerURL: "ws://192.168.178.26:8080/ws",
       debug: function (str: string) {
         console.log(str);
       },
@@ -85,7 +85,7 @@ class WebSocketClient {
     return messages
       .slice()
       .reverse()
-      .map((message) => ({
+      .map(message => ({
         _id: message.chatMessageId,
         text: message.content,
         createdAt: new Date(message.timestamp),

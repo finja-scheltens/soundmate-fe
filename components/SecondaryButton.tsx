@@ -6,7 +6,7 @@ interface Props {
   style?: ViewStyle;
 }
 
-export default function PrimaryButton({ onPress, title, style }: Props) {
+export default function SecondaryButton({ onPress, title, style }: Props) {
   return (
     <Pressable style={[styles.button, style]} onPress={onPress}>
       <Text style={styles.text}>{title}</Text>

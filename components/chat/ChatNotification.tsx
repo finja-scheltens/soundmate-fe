@@ -10,9 +10,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { AppColors } from "../constants/AppColors";
-import { ChatRoom } from "../types";
-import { RootState } from "../store/store";
+import { AppColors } from "../../constants/AppColors";
+import { ChatRoom } from "../../types";
+import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 
 interface ChatNotificationProps {
@@ -64,7 +64,7 @@ export default function ChatNotification({
 
   const navigateToChat = (profileId: string, userName: string) => {
     const matchingChatRoom = chatRooms.find(
-      (chatRoom) => chatRoom.recipientProfileId.toString() === profileId
+      chatRoom => chatRoom.recipientProfileId.toString() === profileId
     );
     navigation.navigate("Chat", {
       chatId: matchingChatRoom!.chatId,

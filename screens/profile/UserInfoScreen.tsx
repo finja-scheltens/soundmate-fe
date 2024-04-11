@@ -19,12 +19,12 @@ import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
-import { GenderType, RootStackParamList } from "../types";
-import { AppColors } from "../constants/AppColors";
-import config from "../constants/Config";
+import { GenderType, RootStackParamList } from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import config from "../../constants/Config";
 
-import PrimaryButton from "../components/PrimaryButton";
-import RadioButton from "../components/RadioButton";
+import PrimaryButton from "../../components/PrimaryButton";
+import RadioButton from "../../components/RadioButton";
 
 const DismissKeyboard: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -54,7 +54,6 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const { isLogin } = route.params;
-
 
   async function updateProfile() {
     setUpdateLoading(true);

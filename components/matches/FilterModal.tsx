@@ -14,12 +14,12 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
 
-import { AppColors } from "../constants/AppColors";
-import { GenderType, GenreData, UserLocation } from "../types";
+import { AppColors } from "../../constants/AppColors";
+import { GenderType, GenreData, UserLocation } from "../../types";
 
-import SecondaryButton from "../components/SecondaryButton";
-import Badge from "../components/Badge";
-import PrimaryButton from "./PrimaryButton";
+import SecondaryButton from "../SecondaryButton";
+import Badge from "../Badge";
+import PrimaryButton from "../PrimaryButton";
 
 interface ModalProps {
   modalVisible: boolean;

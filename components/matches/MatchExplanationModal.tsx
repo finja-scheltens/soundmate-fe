@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import PrimaryButton from "./PrimaryButton";
-import { AppColors } from "../constants/AppColors";
+import PrimaryButton from "../PrimaryButton";
+import { AppColors } from "../../constants/AppColors";
 
 interface ModalProps {
   modalVisible: boolean;

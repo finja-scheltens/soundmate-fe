@@ -16,7 +16,7 @@ interface Props {
   style?: ViewStyle;
 }
 
-export default function PrimaryButton({
+export default function MatchItem({
   imageSource,
   userName,
   userAge,

@@ -17,16 +17,16 @@ import {
 } from "react-native";
 import { AppColors } from "../constants/AppColors";
 import useColorScheme from "../hooks/useColorScheme";
-import HomeScreen from "../screens/HomeScreen";
-import MatchesScreen from "../screens/MatchesScreen";
+import HomeScreen from "../screens/profile/HomeScreen";
+import MatchesScreen from "../screens/matches/MatchesScreen";
 import { RootStackParamList, RootTabParamList } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 import LoginScreen from "../screens/LoginScreen";
-import DetailScreen from "../screens/DetailScreen";
-import MatchingInfoScreen from "../screens/MatchingInfoScreen";
-import UserInfoScreen from "../screens/UserInfoScreen";
-import ChatListScreen from "../screens/ChatListScreen";
-import ChatScreen from "../screens/ChatScreen";
+import DetailScreen from "../screens/matches/DetailScreen";
+import MatchingInfoScreen from "../screens/matches/MatchingInfoScreen";
+import UserInfoScreen from "../screens/profile/UserInfoScreen";
+import ChatListScreen from "../screens/chat/ChatListScreen";
+import ChatScreen from "../screens/chat/ChatScreen";
 
 import Indicator from "../components/Indicator";
 import { RootState } from "../store/store";
@@ -142,7 +142,7 @@ function RootNavigator() {
         name="Chat"
         component={ChatScreen}
         options={({ route, navigation }) => ({
-          headerTitle: (props) => (
+          headerTitle: props => (
             <Header
               chatId={route.params.chatId}
               name={route.params.name}
@@ -157,7 +157,6 @@ function RootNavigator() {
     </Stack.Navigator>
   );
 }
-
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.

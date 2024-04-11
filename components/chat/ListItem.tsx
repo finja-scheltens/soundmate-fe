@@ -5,13 +5,13 @@ import {
   StyleSheet,
   ImageSourcePropType,
 } from "react-native";
-import { AppColors } from "../constants/AppColors";
+import { AppColors } from "../../constants/AppColors";
 interface Props {
   imageSource: ImageSourcePropType;
   text?: string;
 }
 
-export default function PrimaryButton({ imageSource, text }: Props) {
+export default function ListItem({ imageSource, text }: Props) {
   return (
     <View style={styles.itemContainer}>
       <Image source={imageSource} style={styles.itemImage} />

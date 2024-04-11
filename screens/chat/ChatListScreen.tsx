@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RootState } from "../store/store";
+import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
-import { ChatIdMessages, ChatRoom } from "../types";
-import { RootStackParamList } from "../types";
-import { AppColors } from "../constants/AppColors";
-import SearchBar from "../components/SearchBar";
+import { ChatIdMessages, ChatRoom } from "../../types";
+import { RootStackParamList } from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import SearchBar from "../../components/SearchBar";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChatList">;
 
@@ -31,36 +31,36 @@ export default function ChatListScreen({ navigation }: Props) {
   );
 
   const getLastMessage = (chatId: string) => {
-    return (chatIdMessages.chatIdMessages as any)[chatId][0].text ;
+    return (chatIdMessages.chatIdMessages as any)[chatId][0].text;
   };
 
   const chatRoomsWithText = chatRooms.filter(
-    (item) => (chatIdMessages.chatIdMessages as any)[item.chatId].length > 0
+    item => (chatIdMessages.chatIdMessages as any)[item.chatId].length > 0
   );
 
-   const filterChats = () => {
+  const filterChats = () => {
     if (!searchPhrase.trim()) {
       setChats(chatRoomsWithText);
     } else {
-       const filteredChats = chatRoomsWithText.filter((item) => {
-         const nameMatch = item.name
-           .toLowerCase()
-           .includes(searchPhrase.toLowerCase());
-         const lastMessageText =
-           (chatIdMessages.chatIdMessages as any)[item.chatId]?.[0]?.text || "";
-         const messageMatch = lastMessageText
-           .toLowerCase()
-           .includes(searchPhrase.toLowerCase());
-         return nameMatch || messageMatch; 
-       });
+      const filteredChats = chatRoomsWithText.filter(item => {
+        const nameMatch = item.name
+          .toLowerCase()
+          .includes(searchPhrase.toLowerCase());
+        const lastMessageText =
+          (chatIdMessages.chatIdMessages as any)[item.chatId]?.[0]?.text || "";
+        const messageMatch = lastMessageText
+          .toLowerCase()
+          .includes(searchPhrase.toLowerCase());
+        return nameMatch || messageMatch;
+      });
 
       setChats(filteredChats);
-     }
+    }
   };
 
   useEffect(() => {
     filterChats();
-  }, [searchPhrase, chatRooms, JSON.stringify(chatIdMessages.chatIdMessages)]); 
+  }, [searchPhrase, chatRooms, JSON.stringify(chatIdMessages.chatIdMessages)]);
 
   return (
     <View style={styles.container}>
