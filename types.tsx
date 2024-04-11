@@ -108,6 +108,7 @@ export type ChatRoom = {
   senderProfileId: string;
   recipientProfileId: string;
 };
+
 export type ChatIdMessages = {
   [chatId: string]: Array<IMessage>;
 };

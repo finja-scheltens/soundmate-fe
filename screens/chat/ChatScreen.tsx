@@ -1,12 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as React from "react";
-import { StyleSheet } from "react-native";
-import { GiftedChat, IMessage } from "react-native-gifted-chat";
+import { StyleSheet, View } from "react-native";
+import { GiftedChat, IMessage, Send } from "react-native-gifted-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { RootStackParamList } from "../../types";
 import { useSelector } from "react-redux";
 import store, { RootState } from "../../store/store";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { AppColors } from "../../constants/AppColors";
 
 type ChatProps = {
   route: NativeStackScreenProps<RootStackParamList, "Chat">["route"];
@@ -48,6 +51,20 @@ export default function ChatScreen({ route }: ChatProps) {
     _id: route.params.senderProfileId,
   };
 
+  const renderSend = (sendProps: any) => {
+    return (
+      <Send {...sendProps}>
+        <View style={{ marginRight: 10, marginBottom: 5 }}>
+          <MaterialCommunityIcons
+            name="send-circle"
+            size={40}
+            color={AppColors.PRIMARY}
+          />
+        </View>
+      </Send>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <GiftedChat
@@ -57,6 +74,7 @@ export default function ChatScreen({ route }: ChatProps) {
         renderUsernameOnMessage
         placeholder="Nachricht schreiben..."
         bottomOffset={36}
+        renderSend={renderSend}
       />
     </SafeAreaView>
   );

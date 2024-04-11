@@ -74,40 +74,56 @@ export default function ChatListScreen({ navigation }: Props) {
           setClicked={setClicked}
         />
       </SafeAreaView>
-      <FlatList
-        data={chats}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        renderItem={({ item }) => (
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={() =>
-              navigation.push("Chat", {
-                chatId: item.chatId,
-                name: item.name,
-                profilePictureUrl: item.profilePictureUrl,
-                senderProfileId: item.senderProfileId,
-                recipientProfileId: item.recipientProfileId,
-              })
-            }
-          >
-            <View style={styles.item}>
-              <Image
-                source={{
-                  uri: item.profilePictureUrl,
-                }}
-                style={styles.profileImg}
-              />
-              <View style={styles.chatText}>
-                <Text style={styles.userName}>{item.name}</Text>
-                <Text style={styles.lastMessage} numberOfLines={1}>
-                  {getLastMessage(item.chatId)}
-                </Text>
+      {chats.length ? (
+        <FlatList
+          data={chats}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          renderItem={({ item }) => (
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() =>
+                navigation.push("Chat", {
+                  chatId: item.chatId,
+                  name: item.name,
+                  profilePictureUrl: item.profilePictureUrl,
+                  senderProfileId: item.senderProfileId,
+                  recipientProfileId: item.recipientProfileId,
+                })
+              }
+            >
+              <View style={styles.item}>
+                <Image
+                  source={
+                    item.profilePictureUrl
+                      ? { uri: item.profilePictureUrl }
+                      : require("../../assets/images/avatar.png")
+                  }
+                  style={styles.profileImg}
+                />
+                <View style={styles.chatText}>
+                  <Text style={styles.userName}>{item.name}</Text>
+                  <Text style={styles.lastMessage} numberOfLines={1}>
+                    {getLastMessage(item.chatId)}
+                  </Text>
+                </View>
+                <Indicator />
               </View>
-              <Indicator />
-            </View>
-          </TouchableHighlight>
-        )}
-      />
+            </TouchableHighlight>
+          )}
+        />
+      ) : (
+        <View style={styles.noChatContainer}>
+          <Image
+            source={require("../../assets/images/empty-state.png")}
+            style={styles.noChatsImage}
+          />
+          <Text style={styles.noChatsHeadline}>Keine Chats</Text>
+          <Text style={styles.noChatsText}>
+            Hm, hier ist es noch ganz schön ruhig. Also auf die Matches, fertig,
+            los!
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -152,5 +168,38 @@ const styles = StyleSheet.create({
   loading: {
     flex: 1,
     backgroundColor: "white",
+  },
+  noChatContainer: {
+    paddingTop: 100,
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+  },
+  noChatsImage: {
+    height: 180,
+    resizeMode: "contain",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 2,
+    opacity: 0.15,
+  },
+  noChatsHeadline: {
+    fontFamily: "Inter-Bold",
+    fontSize: 18,
+    color: AppColors.GREY_900,
+    marginTop: 20,
+  },
+  noChatsText: {
+    marginTop: 10,
+    marginHorizontal: 34,
+    fontFamily: "Inter-Regular",
+    color: AppColors.GREY_900,
+    fontSize: 16,
+    lineHeight: 20,
+    textAlign: "center",
   },
 });
