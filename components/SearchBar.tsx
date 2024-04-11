@@ -3,12 +3,12 @@ import { StyleSheet, TextInput, View, Keyboard, Button } from "react-native";
 import { Feather, Octicons } from "@expo/vector-icons";
 import { AppColors } from "../constants/AppColors";
 
-interface SearchBarProps {
+type SearchBarProps = {
   clicked: boolean;
   searchPhrase: string;
   setSearchPhrase: (phrase: string) => void;
   setClicked: (clicked: boolean) => void;
-}
+};
 
 export default function SearchBar({
   clicked,

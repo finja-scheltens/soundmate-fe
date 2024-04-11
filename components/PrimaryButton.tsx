@@ -6,19 +6,20 @@ import {
   ViewStyle,
 } from "react-native";
 import { AppColors } from "../constants/AppColors";
-interface Props {
-  onPress: () => void;
+
+type PrimaryButtonProps = {
   title?: string;
   style?: ViewStyle;
   isLoading?: boolean;
-}
+  onPress: () => void;
+};
 
 export default function PrimaryButton({
-  onPress,
   title,
   style,
   isLoading,
-}: Props) {
+  onPress,
+}: PrimaryButtonProps) {
   return (
     <Pressable style={[styles.button, style]} onPress={onPress}>
       {isLoading ? (

@@ -21,7 +21,7 @@ import SecondaryButton from "../SecondaryButton";
 import Badge from "../Badge";
 import PrimaryButton from "../PrimaryButton";
 
-interface ModalProps {
+type FilterModalProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   usersData: {
@@ -38,7 +38,7 @@ interface ModalProps {
     distanceValue: number | undefined,
     distanceFilterEnabled: boolean
   ) => void;
-}
+};
 
 export default function FilterModal({
   modalVisible,
@@ -50,7 +50,7 @@ export default function FilterModal({
   userLocation,
   setModalVisible,
   onApplyFilters,
-}: ModalProps) {
+}: FilterModalProps) {
   const [tempSelectedGenres, setTempSelectedGenres] = useState<string[]>([]);
   const [tempSelectedGenders, setTempSelectedGenders] = useState<GenderType[]>(
     []

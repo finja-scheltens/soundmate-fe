@@ -6,12 +6,13 @@ import {
   ImageSourcePropType,
 } from "react-native";
 import { AppColors } from "../../constants/AppColors";
-interface Props {
+
+type ListItemProps = {
   imageSource: ImageSourcePropType;
   text?: string;
-}
+};
 
-export default function ListItem({ imageSource, text }: Props) {
+export default function ListItem({ imageSource, text }: ListItemProps) {
   return (
     <View style={styles.itemContainer}>
       <Image source={imageSource} style={styles.itemImage} />

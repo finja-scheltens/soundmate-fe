@@ -7,19 +7,19 @@ import {
 } from "react-native";
 import { AppColors } from "../constants/AppColors";
 
-interface Props {
+type RadioButtonProps = {
   style?: ViewStyle;
   selected: boolean;
   label: string;
   onPress: () => void;
-}
+};
 
 export default function RadioButton({
-  onPress,
   style,
   selected,
   label,
-}: Props) {
+  onPress,
+}: RadioButtonProps) {
   return (
     <TouchableOpacity style={styles.radioButton} onPress={onPress}>
       <View style={[styles.radioButtonCircle, style]}>

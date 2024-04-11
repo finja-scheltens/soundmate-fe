@@ -12,15 +12,15 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../PrimaryButton";
 import { AppColors } from "../../constants/AppColors";
 
-interface ModalProps {
+type MatchExplanationModalProps = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 export default function MatchExplanationModal({
   modalVisible,
   setModalVisible,
-}: ModalProps) {
+}: MatchExplanationModalProps) {
   return (
     <Modal
       animationType="fade"

@@ -15,7 +15,7 @@ import { ChatRoom } from "../../types";
 import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 
-interface ChatNotificationProps {
+type ChatNotificationProps = {
   messageProperties: {
     profileId: string;
     profileImage: string;
@@ -23,7 +23,7 @@ interface ChatNotificationProps {
     message: string;
   };
   onDismiss: () => void;
-}
+};
 
 export default function ChatNotification({
   messageProperties,
