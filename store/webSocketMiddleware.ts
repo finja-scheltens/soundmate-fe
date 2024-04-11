@@ -7,13 +7,13 @@ import {
   RECEIVE_MESSAGE,
   CREATE_CHATROOM,
 } from "./actions/webSocketClientActions";
-import { WebSocketClient } from "../hooks/WebSocketClient";
+import { WebSocketClient } from "../utils/WebSocketClient";
 import { ChatRoom } from "../types";
 
 let webSocketClient: WebSocketClient | null = null;
 
 const webSocketMiddleware: Middleware =
-  (store: MiddlewareAPI) => (next: Dispatch) => async (action) => {
+  (store: MiddlewareAPI) => (next: Dispatch) => async action => {
     switch (action.type) {
       case SET_CHATROOMS:
         break;

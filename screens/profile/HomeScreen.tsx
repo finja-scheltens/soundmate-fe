@@ -30,7 +30,7 @@ import config from "../../constants/Config";
 import store, { RootState } from "../../store/store";
 import { resetUserData, setUserData } from "../../store/actions/user";
 import { resetLocation, updateLocation } from "../../store/actions/location";
-import calculateDistance from "../../utils";
+import calculateDistance from "../../utils/utils";
 
 import { Text } from "../../components/Themed";
 import Badge from "../../components/Badge";

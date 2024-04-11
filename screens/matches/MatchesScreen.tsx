@@ -31,7 +31,7 @@ import {
 import { AppColors } from "../../constants/AppColors";
 import config from "../../constants/Config";
 import { RootState } from "../../store/store";
-import calculateDistance from "../../utils";
+import calculateDistance from "../../utils/utils";
 
 import MatchItem from "../../components/matches/MatchItem";
 import FilterModal from "../../components/matches/FilterModal";
