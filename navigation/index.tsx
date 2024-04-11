@@ -1,11 +1,5 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as SplashScreen from "expo-splash-screen";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -14,33 +8,36 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ColorSchemeName, View } from "react-native";
-
+import {
+  ColorSchemeName,
+  Image,
+  View,
+  Text,
+  TouchableHighlight,
+} from "react-native";
 import { AppColors } from "../constants/AppColors";
-
 import useColorScheme from "../hooks/useColorScheme";
-// import ModalScreen from '../screens/ModalScreen';
-// import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from "../screens/HomeScreen";
 import MatchesScreen from "../screens/MatchesScreen";
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types";
+import { RootStackParamList, RootTabParamList } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
-import AppInfoScreen from "../screens/AppInfoScreen";
 import LoginScreen from "../screens/LoginScreen";
 import DetailScreen from "../screens/DetailScreen";
 import MatchingInfoScreen from "../screens/MatchingInfoScreen";
 import UserInfoScreen from "../screens/UserInfoScreen";
+import ChatListScreen from "../screens/ChatListScreen";
+import ChatScreen from "../screens/ChatScreen";
 
-import * as SecureStore from "expo-secure-store";
+import Indicator from "../components/Indicator";
+import { RootState } from "../store/store";
+import { useSelector } from "react-redux";
 
 export default function Navigation({
   colorScheme,
+  children,
 }: {
   colorScheme: ColorSchemeName;
+  children: ReactNode;
 }) {
   return (
     <NavigationContainer
@@ -48,6 +45,7 @@ export default function Navigation({
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
     >
       <RootNavigator />
+      {children}
     </NavigationContainer>
   );
 }
@@ -58,7 +56,50 @@ export default function Navigation({
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+type HeaderProps = {
+  chatId: string;
+  name: string;
+  profilePictureUrl: string;
+};
+
+function Header({ name, profilePictureUrl }: HeaderProps) {
+  return (
+    <TouchableHighlight
+      style={{
+        flex: 1,
+      }}
+    >
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
+        <Image
+          style={{ width: 35, height: 35, borderRadius: 50 }}
+          source={{
+            uri: profilePictureUrl,
+          }}
+        />
+        <Text
+          style={{
+            fontWeight: "600",
+            fontSize: 16,
+          }}
+        >
+          {name}
+        </Text>
+      </View>
+    </TouchableHighlight>
+  );
+}
+
 function RootNavigator() {
+  const newMessage = useSelector(
+    (state: RootState) => state.WebSocketClient.newChatMesssage
+  );
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -68,12 +109,17 @@ function RootNavigator() {
       />
       <Stack.Screen
         name="Root"
-        component={BottomTabNavigator}
         options={{
           headerShown: false,
           animation: "fade",
         }}
-      />
+      >
+        {() => (
+          <BottomTabNavigator
+            newChatMessage={Object.keys(newMessage).length !== 0}
+          />
+        )}
+      </Stack.Screen>
       <Stack.Screen
         name="UserInfo"
         component={UserInfoScreen}
@@ -92,34 +138,26 @@ function RootNavigator() {
         component={MatchingInfoScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={({ route, navigation }) => ({
+          headerTitle: (props) => (
+            <Header
+              chatId={route.params.chatId}
+              name={route.params.name}
+              profilePictureUrl={route.params.profilePictureUrl}
+            />
+          ),
+          headerBackTitleVisible: false,
+          headerTransparent: true,
+          headerBlurEffect: "light",
+        })}
+      />
     </Stack.Navigator>
   );
 }
 
-function SignedInNavigator() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Root"
-        component={BottomTabNavigator}
-        options={{ headerShown: false, animationTypeForReplace: "pop" }}
-      />
-      <Stack.Screen
-        name="UserInfo"
-        component={UserInfoScreen}
-        options={{
-          headerShown: false,
-          animation: "fade",
-        }}
-      />
-      <Stack.Screen
-        name="Detail"
-        component={DetailScreen}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
@@ -127,7 +165,7 @@ function SignedInNavigator() {
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
-function BottomTabNavigator() {
+function BottomTabNavigator({ newChatMessage }: { newChatMessage: boolean }) {
   const colorScheme = useColorScheme();
 
   return (
@@ -164,17 +202,20 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="AppInfo"
-        component={AppInfoScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
-            />
-          ),
-        }}
+        name="ChatList"
+        component={ChatListScreen}
+        options={() => ({
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View style={{ position: "relative" }}>
+                <TabBarIcon
+                  name={focused ? "chatbubbles" : "chatbubbles-outline"}
+                />
+                {newChatMessage && <Indicator />}
+              </View>
+            );
+          },
+        })}
       />
     </BottomTab.Navigator>
   );

@@ -44,7 +44,6 @@ type UserInfoProps = {
 
 export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
   const ref = React.useRef(null);
-
   const [instaName, onChangeInstaName] = useState("");
   const [userName, onChangeUserName] = useState("");
   const [userAge, onChangeUserAge] = useState("");
@@ -55,6 +54,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
   const [updateLoading, setUpdateLoading] = useState(false);
 
   const { isLogin } = route.params;
+
 
   async function updateProfile() {
     setUpdateLoading(true);

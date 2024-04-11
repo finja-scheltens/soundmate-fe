@@ -9,6 +9,7 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { IMessage } from "react-native-gifted-chat";
 
 declare global {
   namespace ReactNavigation {
@@ -36,7 +37,7 @@ export type UserData = {
   diverseFactor: number;
 };
 
-export interface UserLocation {
+export type UserLocation = {
   location: {
     latitude: number;
     longitude: number;
@@ -65,6 +66,14 @@ export type MatchingInfoParams = {
   matchingPercentage: number;
 };
 
+export type ChatParams = {
+  chatId: string;
+  name: string;
+  profilePictureUrl: string;
+  senderProfileId: string;
+  recipientProfileId: string;
+}
+
 export type RootStackParamList = {
   Login: undefined;
   UserInfo: UserInfoParams;
@@ -72,6 +81,8 @@ export type RootStackParamList = {
   Matches: undefined;
   Detail: DetailParams;
   MatchingInfo: MatchingInfoParams;
+  ChatList: undefined;
+  Chat: ChatParams;
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
 };
 
@@ -86,7 +97,21 @@ export type RootTabParamList = {
   Detail: undefined;
   MatchingInfo: undefined;
   AppInfo: undefined;
+  ChatList: undefined;
+  Chat: ChatParams;
 };
+
+//For chat funcionalities
+export type ChatRoom = {
+  chatId: string;
+  name: string;
+  profilePictureUrl: string;
+  senderProfileId: string;
+  recipientProfileId: string;
+};
+export type ChatIdMessages = {
+  [chatId: string]: Array<IMessage>;
+}
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   CompositeScreenProps<

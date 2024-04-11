@@ -36,6 +36,7 @@ import { Text } from "../components/Themed";
 import ListItem from "../components/ListItem";
 import PrimaryButton from "../components/PrimaryButton";
 import Badge from "../components/Badge";
+import { ChatRoom, ChatIdMessages } from "../types";
 
 type DetailProps = {
   navigation: NativeStackScreenProps<
@@ -44,6 +45,7 @@ type DetailProps = {
   >["navigation"];
   route: NativeStackScreenProps<RootStackParamList, "Detail">["route"];
 };
+
 
 type Factors = {
   novelFactor: number;
@@ -61,6 +63,12 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
   const [isLoading, setLoading] = useState(false);
 
   const usersData = useSelector((state: RootState) => state.user.usersData);
+  const chatRooms: ChatRoom[] = useSelector(
+    (state: RootState) => state.WebSocketClient.chatRooms
+  );
+  const chatIdMessages: ChatIdMessages = useSelector(
+    (state: RootState) => state.WebSocketClient.messages
+  );
   const { profileId } = route.params;
 
   useEffect(() => {
@@ -74,12 +82,12 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then(response => {
+        .then((response) => {
           setMatchData(response.data);
           setTopArtists(response.data.topArtists);
           setTopGenres(response.data.topGenres);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log("error", error.message);
         })
         .finally(() => setLoading(false));
@@ -117,6 +125,34 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
     const matchingPercentage = Math.round((1 - distanceNoramalized) * 100);
 
     setMatchingPercentage(matchingPercentage);
+  };
+
+  const navigateToChat = (chatRoom: ChatRoom) => {
+    const chatParams = {
+      chatId: chatRoom.chatId,
+      name: chatRoom.name,
+      profilePictureUrl: chatRoom.profilePictureUrl,
+      senderProfileId: chatRoom.senderProfileId,
+      recipientProfileId: chatRoom.recipientProfileId,
+    };
+    navigation.push("Chat", chatParams);
+  };
+
+
+  const getChatRoom = (profileId: string, chatRooms: ChatRoom[]) => {
+     const chatRoom = chatRooms.find(
+       (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+     );
+     return chatRoom;
+  }
+
+  const chattedBefore = (profileId: string, chatRooms: ChatRoom[]) => {
+    const chatRoom = chatRooms.find(
+      (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+    );
+    if ((chatIdMessages.chatIdMessages as any)[chatRoom!.chatId].length > 0) {
+      return chatRoom
+    }
   };
 
   return isLoading ? (
@@ -228,16 +264,10 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
         </View>
       </ScrollView>
       <PrimaryButton
-        title="Sag Hallo auf Instagram"
+        title={chattedBefore(profileId, chatRooms) ? "Nachricht schreiben" : "Sag Hallo"}
         style={styles.chatButton}
         onPress={() => {
-          Linking.openURL(
-            `instagram://user?username=${matchData.contactInfo}`
-          ).catch(() => {
-            Linking.openURL(
-              `https://www.instagram.com/${matchData.contactInfo}`
-            );
-          });
+          navigateToChat(getChatRoom(profileId, chatRooms)!);
         }}
       />
     </View>

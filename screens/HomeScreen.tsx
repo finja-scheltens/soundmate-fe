@@ -36,6 +36,7 @@ import { Text } from "../components/Themed";
 import Badge from "../components/Badge";
 import ListItem from "../components/ListItem";
 import SecondaryButton from "../components/SecondaryButton";
+import { connectWebSocket } from "../store//actions/webSocketClientActions";
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -50,7 +51,7 @@ const persistUserLocation = async (lat: number | null, long: number | null) => {
       latitude: lat,
       longitude: long,
     },
-  }).catch(error => {
+  }).catch((error) => {
     console.log("error", error.message);
   });
 };
@@ -60,9 +61,11 @@ export default function HomeScreen({ navigation }: HomeProps) {
   useScrollToTop(ref);
   const appState = useRef(AppState.currentState);
 
-  const dispatch = useDispatch();
   const usersData = useSelector((state: RootState) => state.user.usersData);
   const [isLoading, setLoading] = useState(false);
+  const [profileId, setProfileId] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getProfileData = async () => {
@@ -75,21 +78,28 @@ export default function HomeScreen({ navigation }: HomeProps) {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then(response => {
+        .then((response) => {
           dispatch(setUserData(response.data));
 
           const userData = response.data;
+          setProfileId(response.data.profileId);
           if (userData.name === "") {
             navigation.replace("UserInfo", { isLogin: true });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log("error", error.message);
         })
         .finally(() => setLoading(false));
     };
     getProfileData();
   }, []);
+
+  useEffect(() => {
+    if (profileId) {
+      dispatch(connectWebSocket(profileId, dispatch));
+    }
+  }, [profileId, dispatch]);
 
   const getUserLocation = async () => {
     try {
