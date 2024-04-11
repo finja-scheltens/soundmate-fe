@@ -55,7 +55,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
 
   const { isLogin } = route.params;
 
-  async function updateProfile() {
+  const updateProfile = async () => {
     setUpdateLoading(true);
 
     const token = await SecureStore.getItemAsync("token");
@@ -80,9 +80,9 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
         console.log("error", error.message);
       })
       .finally(() => setTimeout(() => setUpdateLoading(false), 500));
-  }
+  };
 
-  async function submit() {
+  const submit = async () => {
     if (
       userName.trim() == "" ||
       userAge.trim() == "" ||
@@ -95,7 +95,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
     } else {
       updateProfile();
     }
-  }
+  };
 
   useEffect(() => {
     const getProfileData = async () => {
