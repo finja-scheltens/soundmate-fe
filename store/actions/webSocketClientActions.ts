@@ -8,8 +8,6 @@ export const DISCONNECT_WEBSOCKET = "DISCONNECT_WEBSOCKET";
 export const RECEIVE_MESSAGE = "RECEIVE_MESSAGE";
 export const SEND_MESSAGE = "SEND_MESSAGE";
 export const NEW_MESSAGE_RECEIVED = "NEW_MESSAGE_RECEIVED";
-export const CREATE_CHATROOM = "CREATE_CHATROOM";
-export const NEW_CHATROOM = "NEW_CHATROOM";
 
 export const setChatRooms = (chatRooms: ChatRoom[]) => ({
   type: SET_CHATROOMS,
@@ -34,11 +32,6 @@ export const sendMessage = (message: IMessage) => ({
   type: SEND_MESSAGE,
 })
 
-export const createChatRoom = (chatRoom: ChatRoom) => ({
-  type: CREATE_CHATROOM,
-  payload: { chatRoom },
-});
-
 export const receiveMessage = (message: any) => ({
   type: RECEIVE_MESSAGE,
   payload: { message },
@@ -49,10 +42,7 @@ export const newMessageReceived = (message: any) => ({
   payload: { message },
 });
 
-export const newChatRoom = (chatRoom: ChatRoom) => ({
-  type: NEW_CHATROOM,
-  payload: { chatRoom },
-})
+
 
 
 

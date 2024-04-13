@@ -6,8 +6,6 @@ import {
   SET_MESSAGES_FOR_CHATROOM,
   SEND_MESSAGE,
   NEW_MESSAGE_RECEIVED,
-  CREATE_CHATROOM,
-  NEW_CHATROOM,
 } from "../actions/webSocketClientActions";
 
 const initialState = {
@@ -16,8 +14,6 @@ const initialState = {
   messages: {}, // { chatId: [messages] }
   profileId: null,
   newChatMesssage: {},
-  newChatRoom: {}
-  
 };
 
 // Reducer Funktion
@@ -60,16 +56,6 @@ const webSocketClientReducer = (state = initialState, action: any) => {
       return {
         ...state,
         newChatMesssage: action.payload,
-      };
-    case CREATE_CHATROOM:
-      return {
-        ...state,
-        chatRoom: action.payload,
-      };
-    case NEW_CHATROOM:
-      return {
-        ...state,
-        newChatRoom: action.payload,
       };
 
     default:

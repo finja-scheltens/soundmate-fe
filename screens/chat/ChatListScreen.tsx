@@ -41,9 +41,9 @@ export default function ChatListScreen({ navigation }: Props) {
 
   const filterChats = () => {
     if (!searchPhrase.trim()) {
-      setChats(chatRoomsWithText);
+      setChats(sortChatsByMostRecent(chatRoomsWithText, chatIdMessages));
     } else {
-      const filteredChats = chatRoomsWithText.filter(item => {
+      const filteredChats = chatRoomsWithText.filter((item) => {
         const nameMatch = item.name
           .toLowerCase()
           .includes(searchPhrase.toLowerCase());
@@ -55,13 +55,33 @@ export default function ChatListScreen({ navigation }: Props) {
         return nameMatch || messageMatch;
       });
 
-      setChats(filteredChats);
+      setChats(sortChatsByMostRecent(filteredChats, chatIdMessages));
     }
   };
 
   useEffect(() => {
     filterChats();
   }, [searchPhrase, JSON.stringify(chatIdMessages.chatIdMessages)]);
+
+  const parseISODate = (isoDate: string) => {
+    return new Date(isoDate);
+  };
+
+  const sortChatsByMostRecent = (
+    chatRoomsWithText: ChatRoom[],
+    chatIdMessages: ChatIdMessages
+  ) => {
+    return chatRoomsWithText.sort((a, b) => {
+      const lastMessageA = (chatIdMessages.chatIdMessages as any)[a.chatId][0];
+      const lastMessageB = (chatIdMessages.chatIdMessages as any)[b.chatId][0];
+
+      const dateA = parseISODate(lastMessageA.createdAt).getTime();
+      const dateB = parseISODate(lastMessageB.createdAt).getTime();
+      console.log(dateA, dateB);
+
+      return dateB - dateA;
+    });
+  };
 
   return (
     <View style={styles.container}>
