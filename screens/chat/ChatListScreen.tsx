@@ -11,12 +11,13 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RootState } from "../../store/store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ChatIdMessages, ChatRoom } from "../../types";
 import { RootStackParamList } from "../../types";
 import { AppColors } from "../../constants/AppColors";
 import SearchBar from "../../components/SearchBar";
 import Indicator from "../../components/Indicator";
+import { deleteIncomingMessage } from "../../store/actions/webSocketClientActions";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ChatList">;
 
@@ -30,13 +31,26 @@ export default function ChatListScreen({ navigation }: Props) {
   const chatIdMessages: ChatIdMessages = useSelector(
     (state: RootState) => state.WebSocketClient.messages
   );
+  const newIncomingMessages = useSelector(
+    (state: RootState) => state.WebSocketClient.newIncomingMessages
+  );
+  const dispatch = useDispatch();
+
+  const showNewMessageIndicator = (chatId: string) => {
+    const lastMessageId = (chatIdMessages.chatIdMessages as any)[chatId][0]._id;
+    return newIncomingMessages.find((item) => item._id === lastMessageId);
+  };
+
+  const removeNewMessageIndicator = (chatId: string) => {
+    dispatch(deleteIncomingMessage((chatIdMessages.chatIdMessages as any)[chatId][0]));
+  }
 
   const getLastMessage = (chatId: string) => {
     return (chatIdMessages.chatIdMessages as any)[chatId][0].text;
   };
 
   const chatRoomsWithText = chatRooms.filter(
-    item => (chatIdMessages.chatIdMessages as any)[item.chatId].length > 0
+    (item) => (chatIdMessages.chatIdMessages as any)[item.chatId].length > 0
   );
 
   const filterChats = () => {
@@ -77,7 +91,6 @@ export default function ChatListScreen({ navigation }: Props) {
 
       const dateA = parseISODate(lastMessageA.createdAt).getTime();
       const dateB = parseISODate(lastMessageB.createdAt).getTime();
-      console.log(dateA, dateB);
 
       return dateB - dateA;
     });
@@ -101,15 +114,16 @@ export default function ChatListScreen({ navigation }: Props) {
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() =>
+              onPress={() => {
                 navigation.push("Chat", {
                   chatId: item.chatId,
                   name: item.name,
                   profilePictureUrl: item.profilePictureUrl,
                   senderProfileId: item.senderProfileId,
                   recipientProfileId: item.recipientProfileId,
-                })
-              }
+                });
+               removeNewMessageIndicator(item.chatId);
+              }}
             >
               <View style={styles.item}>
                 <Image
@@ -126,7 +140,7 @@ export default function ChatListScreen({ navigation }: Props) {
                     {getLastMessage(item.chatId)}
                   </Text>
                 </View>
-                <Indicator />
+                {showNewMessageIndicator(item.chatId) && <Indicator />}
               </View>
             </TouchableHighlight>
           )}
