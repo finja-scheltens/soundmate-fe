@@ -9,7 +9,7 @@ Soundmate was initially developed as part of a university course at [HTW Berlin]
 ### Prerequisites
 
 - Node.js
-- npm or yarn
+- yarn
 
 ### Installation
 
