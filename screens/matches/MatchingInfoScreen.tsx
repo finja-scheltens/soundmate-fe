@@ -13,13 +13,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { RootStackParamList } from "../types";
-import { AppColors } from "../constants/AppColors";
-import { Text } from "../components/Themed";
-import { RootState } from "../store/store";
+import { RootStackParamList } from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import { Text } from "../../components/Themed";
+import { RootState } from "../../store/store";
 
-import MatchRadarChart from "../components/MatchRadarChart";
-import MatchExplanationModal from "../components/MatchExplanationModal";
+import MatchRadarChart from "../../components/matches/MatchRadarChart";
+import MatchExplanationModal from "../../components/matches/MatchExplanationModal";
 
 type MatchingInfoProps = {
   navigation: NativeStackScreenProps<
@@ -74,7 +74,7 @@ export default function MatchingInfoScreen({
                   source={
                     usersData.profilePictureUrl
                       ? { uri: usersData.profilePictureUrl }
-                      : require("../assets/images/avatar2.png")
+                      : require("../../assets/images/avatar2.png")
                   }
                   style={styles.userImages}
                 />
@@ -89,7 +89,7 @@ export default function MatchingInfoScreen({
               {matchingPercentage}%
             </Text>
             <Image
-              source={require("../assets/images/match-percentage-bg.png")}
+              source={require("../../assets/images/match-percentage-bg.png")}
               style={styles.matchingPercentageImage}
             />
           </View>
@@ -105,7 +105,7 @@ export default function MatchingInfoScreen({
                   source={
                     matchData.profilePictureUrl
                       ? { uri: matchData.profilePictureUrl }
-                      : require("../assets/images/avatar2.png")
+                      : require("../../assets/images/avatar2.png")
                   }
                   style={styles.userImages}
                 />

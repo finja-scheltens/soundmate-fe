@@ -42,7 +42,7 @@ export type UserLocation = {
     latitude: number;
     longitude: number;
   } | null;
-}
+};
 
 export type ArtistData = {
   name: string;
@@ -72,7 +72,7 @@ export type ChatParams = {
   profilePictureUrl: string;
   senderProfileId: string;
   recipientProfileId: string;
-}
+};
 
 export type RootStackParamList = {
   Login: undefined;
@@ -96,7 +96,6 @@ export type RootTabParamList = {
   Matches: undefined;
   Detail: undefined;
   MatchingInfo: undefined;
-  AppInfo: undefined;
   ChatList: undefined;
   Chat: ChatParams;
 };
@@ -109,9 +108,10 @@ export type ChatRoom = {
   senderProfileId: string;
   recipientProfileId: string;
 };
+
 export type ChatIdMessages = {
   [chatId: string]: Array<IMessage>;
-}
+};
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   CompositeScreenProps<

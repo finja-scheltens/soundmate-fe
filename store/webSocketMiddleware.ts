@@ -5,25 +5,18 @@ import {
   SET_CHATROOMS,
   SEND_MESSAGE,
   RECEIVE_MESSAGE,
-  CREATE_CHATROOM,
+  storeIncomingMessage,
+  deleteIncomingMessage,
 } from "./actions/webSocketClientActions";
-import { WebSocketClient } from "../hooks/WebSocketClient";
+import { WebSocketClient } from "../utils/WebSocketClient";
 import { ChatRoom } from "../types";
 
 let webSocketClient: WebSocketClient | null = null;
 
 const webSocketMiddleware: Middleware =
-  (store: MiddlewareAPI) => (next: Dispatch) => async (action) => {
+  (store: MiddlewareAPI) => (next: Dispatch) => async action => {
     switch (action.type) {
       case SET_CHATROOMS:
-        break;
-
-      case CREATE_CHATROOM:
-        const existingChatRooms = store.getState().WebSocketClient.chatRooms;
-        const createdChatRoom = action.payload.chatRoom;
-        if (createdChatRoom) {
-          existingChatRooms.push(createdChatRoom);
-        }
         break;
 
       case CONNECT_WEBSOCKET:
@@ -64,6 +57,12 @@ const webSocketMiddleware: Middleware =
           action.payload.senderProfileId,
           action.payload.recipientProfileId
         );
+        const sendAllMessages = store.getState().WebSocketClient.messages;
+        const sendUpdatedMessages = sendAllMessages.chatIdMessages;
+        store.dispatch({
+          type: "SET_MESSAGES_FOR_CHATROOM",
+          payload: sendUpdatedMessages,
+        });
         break;
 
       case RECEIVE_MESSAGE:
@@ -91,6 +90,8 @@ const webSocketMiddleware: Middleware =
           type: "NEW_MESSAGE_RECEIVED",
           payload: transformedMessage,
         });
+
+          store.dispatch(storeIncomingMessage(transformedMessage!));
 
         break;
 

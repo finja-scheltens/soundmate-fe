@@ -8,14 +8,14 @@ import {
 } from "react-native";
 import { AppColors } from "../constants/AppColors";
 
-interface Props {
+type BadgeProps = {
   text?: string;
   style?: ViewStyle;
   selected?: boolean;
   onPress?: () => void;
-}
+};
 
-export default function Badge({ text, selected, onPress }: Props) {
+export default function Badge({ text, selected, onPress }: BadgeProps) {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {

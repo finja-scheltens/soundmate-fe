@@ -27,16 +27,16 @@ import {
   ArtistData,
   GenreData,
   GenderType,
-} from "../types";
-import { AppColors } from "../constants/AppColors";
-import config from "../constants/Config";
-import { RootState } from "../store/store";
+} from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import config from "../../constants/Config";
+import { RootState } from "../../store/store";
 
-import { Text } from "../components/Themed";
-import ListItem from "../components/ListItem";
-import PrimaryButton from "../components/PrimaryButton";
-import Badge from "../components/Badge";
-import { ChatRoom, ChatIdMessages } from "../types";
+import { Text } from "../../components/Themed";
+import ListItem from "../../components/ListItem";
+import PrimaryButton from "../../components/PrimaryButton";
+import Badge from "../../components/Badge";
+import { ChatRoom, ChatIdMessages } from "../../types";
 
 type DetailProps = {
   navigation: NativeStackScreenProps<
@@ -45,7 +45,6 @@ type DetailProps = {
   >["navigation"];
   route: NativeStackScreenProps<RootStackParamList, "Detail">["route"];
 };
-
 
 type Factors = {
   novelFactor: number;
@@ -82,12 +81,12 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then((response) => {
+        .then(response => {
           setMatchData(response.data);
           setTopArtists(response.data.topArtists);
           setTopGenres(response.data.topGenres);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log("error", error.message);
         })
         .finally(() => setLoading(false));
@@ -138,20 +137,19 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
     navigation.push("Chat", chatParams);
   };
 
-
   const getChatRoom = (profileId: string, chatRooms: ChatRoom[]) => {
-     const chatRoom = chatRooms.find(
-       (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
-     );
-     return chatRoom;
-  }
+    const chatRoom = chatRooms.find(
+      (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
+    );
+    return chatRoom;
+  };
 
   const chattedBefore = (profileId: string, chatRooms: ChatRoom[]) => {
     const chatRoom = chatRooms.find(
       (chatRoom: ChatRoom) => chatRoom.recipientProfileId === profileId
     );
     if ((chatIdMessages.chatIdMessages as any)[chatRoom!.chatId].length > 0) {
-      return chatRoom
+      return chatRoom;
     }
   };
 
@@ -166,7 +164,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
             source={
               matchData.profilePictureUrl
                 ? { uri: matchData.profilePictureUrl }
-                : require("../assets/images/avatar.png")
+                : require("../../assets/images/avatar.png")
             }
             style={styles.profileHeaderImage}
             imageStyle={{
@@ -233,7 +231,7 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
               </TouchableOpacity>
             </View>
             <Image
-              source={require("../assets/images/match-image.png")}
+              source={require("../../assets/images/match-image.png")}
               style={styles.matchingImage}
             />
           </View>
@@ -264,7 +262,11 @@ export default function DetailScreen({ route, navigation }: DetailProps) {
         </View>
       </ScrollView>
       <PrimaryButton
-        title={chattedBefore(profileId, chatRooms) ? "Nachricht schreiben" : "Sag Hallo"}
+        title={
+          chattedBefore(profileId, chatRooms)
+            ? "Nachricht schreiben"
+            : "Sag Hallo"
+        }
         style={styles.chatButton}
         onPress={() => {
           navigateToChat(getChatRoom(profileId, chatRooms)!);

@@ -27,14 +27,15 @@ import {
   GenreData,
   RootStackParamList,
   UserLocation,
-} from "../types";
-import { AppColors } from "../constants/AppColors";
-import config from "../constants/Config";
-import { RootState } from "../store/store";
-import calculateDistance from "../utils";
+} from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import config from "../../constants/Config";
+import { RootState } from "../../store/store";
+import calculateDistance from "../../utils/utils";
 
-import MatchItem from "../components/MatchItem";
-import FilterModal from "../components/FilterModal";
+import MatchItem from "../../components/matches/MatchItem";
+import FilterModal from "../../components/matches/FilterModal";
+import Indicator from "../../components/Indicator";
 
 const numColumns = 2;
 type Props = NativeStackScreenProps<RootStackParamList, "Matches">;
@@ -286,9 +287,7 @@ export default function MatchesScreen({ navigation }: Props) {
           {selectedGenders.length ||
           selectedGenres.length ||
           distanceFilterEnabled ? (
-            <View style={styles.outerFilterBadge}>
-              <View style={styles.innerFilterBadge}></View>
-            </View>
+            <Indicator style={{ position: "absolute", top: -4, right: -3 }} />
           ) : null}
           <Entypo name="sound-mix" size={26} color={AppColors.GREY_900} />
         </TouchableOpacity>
@@ -319,7 +318,7 @@ export default function MatchesScreen({ navigation }: Props) {
                     imageSource={
                       item.profilePictureUrl
                         ? { uri: item.profilePictureUrl }
-                        : require("../assets/images/avatar2.png")
+                        : require("../../assets/images/avatar2.png")
                     }
                     style={item.empty ? styles.itemInvisible : styles.matchItem}
                   />
@@ -341,7 +340,7 @@ export default function MatchesScreen({ navigation }: Props) {
               }
             >
               <Image
-                source={require("../assets/images/empty-state.png")}
+                source={require("../../assets/images/empty-state.png")}
                 style={styles.noMatchesImage}
               />
               <Text style={styles.noMatchesHeadline}>Keine Matches</Text>
@@ -453,24 +452,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     textAlign: "center",
-  },
-  outerFilterBadge: {
-    position: "absolute",
-    top: -4,
-    right: -3,
-    width: 14,
-    height: 14,
-    borderRadius: 50,
-    backgroundColor: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 100,
-  },
-  innerFilterBadge: {
-    width: 8,
-    height: 8,
-    borderRadius: 50,
-    backgroundColor: AppColors.PRIMARY,
   },
 });

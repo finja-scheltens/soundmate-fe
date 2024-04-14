@@ -24,19 +24,19 @@ import {
   ArtistData,
   GenreData,
   GenderType,
-} from "../types";
-import { AppColors } from "../constants/AppColors";
-import config from "../constants/Config";
-import store, { RootState } from "../store/store";
-import { resetUserData, setUserData } from "../store/actions/user";
-import { resetLocation, updateLocation } from "../store/actions/location";
-import calculateDistance from "../utils";
+} from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import config from "../../constants/Config";
+import store, { RootState } from "../../store/store";
+import { resetUserData, setUserData } from "../../store/actions/user";
+import { resetLocation, updateLocation } from "../../store/actions/location";
+import calculateDistance from "../../utils/utils";
 
-import { Text } from "../components/Themed";
-import Badge from "../components/Badge";
-import ListItem from "../components/ListItem";
-import SecondaryButton from "../components/SecondaryButton";
-import { connectWebSocket } from "../store//actions/webSocketClientActions";
+import { Text } from "../../components/Themed";
+import Badge from "../../components/Badge";
+import ListItem from "../../components/ListItem";
+import SecondaryButton from "../../components/SecondaryButton";
+import { connectWebSocket } from "../../store/actions/webSocketClientActions";
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -51,7 +51,7 @@ const persistUserLocation = async (lat: number | null, long: number | null) => {
       latitude: lat,
       longitude: long,
     },
-  }).catch((error) => {
+  }).catch(error => {
     console.log("error", error.message);
   });
 };
@@ -78,7 +78,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then((response) => {
+        .then(response => {
           dispatch(setUserData(response.data));
 
           const userData = response.data;
@@ -87,7 +87,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
             navigation.replace("UserInfo", { isLogin: true });
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log("error", error.message);
         })
         .finally(() => setLoading(false));
@@ -211,7 +211,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
           source={
             usersData.profilePictureUrl
               ? { uri: usersData.profilePictureUrl }
-              : require("../assets/images/avatar.png")
+              : require("../../assets/images/avatar.png")
           }
           style={styles.profileHeaderImage}
         />

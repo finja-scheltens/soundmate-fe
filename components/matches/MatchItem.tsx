@@ -9,19 +9,19 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-interface Props {
+type MatchItemProps = {
   imageSource: ImageSourcePropType;
   userName: string;
   userAge: number;
   style?: ViewStyle;
-}
+};
 
-export default function PrimaryButton({
+export default function MatchItem({
   imageSource,
   userName,
   userAge,
   style,
-}: Props) {
+}: MatchItemProps) {
   return (
     <View style={[styles.itemContainer, style]}>
       <View style={styles.innerContainer}>

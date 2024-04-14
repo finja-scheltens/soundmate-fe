@@ -8,7 +8,7 @@ import {
   VictoryPolarAxis,
 } from "victory-native";
 
-import { AppColors } from "../constants/AppColors";
+import { AppColors } from "../../constants/AppColors";
 
 type RadarChartProps = {
   userFactors: {

@@ -30,9 +30,9 @@ class JwtResponse {
   }
 }
 
-async function saveToken(value: string) {
+const saveToken = async (value: string) => {
   await SecureStore.setItemAsync("token", value);
-}
+};
 
 type LoginProps = NativeStackScreenProps<RootStackParamList, "Login">;
 

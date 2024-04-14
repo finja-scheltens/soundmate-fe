@@ -19,12 +19,12 @@ import * as SecureStore from "expo-secure-store";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
-import { GenderType, RootStackParamList } from "../types";
-import { AppColors } from "../constants/AppColors";
-import config from "../constants/Config";
+import { GenderType, RootStackParamList } from "../../types";
+import { AppColors } from "../../constants/AppColors";
+import config from "../../constants/Config";
 
-import PrimaryButton from "../components/PrimaryButton";
-import RadioButton from "../components/RadioButton";
+import PrimaryButton from "../../components/PrimaryButton";
+import RadioButton from "../../components/RadioButton";
 
 const DismissKeyboard: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -55,8 +55,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
 
   const { isLogin } = route.params;
 
-
-  async function updateProfile() {
+  const updateProfile = async () => {
     setUpdateLoading(true);
 
     const token = await SecureStore.getItemAsync("token");
@@ -81,9 +80,9 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
         console.log("error", error.message);
       })
       .finally(() => setTimeout(() => setUpdateLoading(false), 500));
-  }
+  };
 
-  async function submit() {
+  const submit = async () => {
     if (
       userName.trim() == "" ||
       userAge.trim() == "" ||
@@ -96,7 +95,7 @@ export default function UserInfoScreen({ route, navigation }: UserInfoProps) {
     } else {
       updateProfile();
     }
-  }
+  };
 
   useEffect(() => {
     const getProfileData = async () => {

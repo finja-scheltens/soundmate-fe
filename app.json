@@ -30,7 +30,7 @@
       "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo-square.png"
     },
     "extra": {
       "eas": {

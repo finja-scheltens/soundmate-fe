@@ -1,3 +1,4 @@
+import { IMessage } from "react-native-gifted-chat";
 import {
   CONNECT_WEBSOCKET,
   DISCONNECT_WEBSOCKET,
@@ -6,8 +7,8 @@ import {
   SET_MESSAGES_FOR_CHATROOM,
   SEND_MESSAGE,
   NEW_MESSAGE_RECEIVED,
-  CREATE_CHATROOM,
-  NEW_CHATROOM,
+  STORE_INCOMING_MESSAGE,
+  DELETE_INCOMING_MESSAGE,
 } from "../actions/webSocketClientActions";
 
 const initialState = {
@@ -16,8 +17,7 @@ const initialState = {
   messages: {}, // { chatId: [messages] }
   profileId: null,
   newChatMesssage: {},
-  newChatRoom: {}
-  
+  newIncomingMessages: Array<IMessage>(),
 };
 
 // Reducer Funktion
@@ -61,15 +61,21 @@ const webSocketClientReducer = (state = initialState, action: any) => {
         ...state,
         newChatMesssage: action.payload,
       };
-    case CREATE_CHATROOM:
+
+    case STORE_INCOMING_MESSAGE:
       return {
         ...state,
-        chatRoom: action.payload,
+        newIncomingMessages: [
+          ...state.newIncomingMessages,
+          action.payload.message,
+        ],
       };
-    case NEW_CHATROOM:
+    case DELETE_INCOMING_MESSAGE:
       return {
         ...state,
-        newChatRoom: action.payload,
+        newIncomingMessages: state.newIncomingMessages.filter(
+          (msg) => msg._id !== action.payload.message._id
+        ),
       };
 
     default:
