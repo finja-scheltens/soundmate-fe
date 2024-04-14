@@ -1,6 +1,5 @@
-
-const API_URL = "http://192.168.178.105:8080"; //TODO: Enter your IP-Address
+const API_URL = "http://82.165.237.61:8080";
 
 export default {
-    API_URL,
+  API_URL,
 };

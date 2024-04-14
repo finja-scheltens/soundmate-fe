@@ -19,7 +19,7 @@ class WebSocketClient {
 
   connect() {
     this.client = new Client({
-      brokerURL: "ws://192.168.178.26:8080/ws",
+      brokerURL: "ws://82.165.237.61:8080/ws",
       debug: function (str: string) {
         console.log(str);
       },
